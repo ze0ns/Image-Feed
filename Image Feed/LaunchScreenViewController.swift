@@ -12,6 +12,7 @@ class ImagesListViewController: UIViewController {
     let tableView = UITableView()
     var imageLists =  ImagesListViewController.imagesListMock
     let cellId = "ImagesListCell"
+    
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .long
@@ -21,18 +22,19 @@ class ImagesListViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 0.10, green: 0.11, blue: 0.13, alpha: 1.00)
+        view.backgroundColor = .yp_Black
         setupTableView()
         configureTable()
     }
     func setupTableView() {
         tableView.register(ImageCell.self, forCellReuseIdentifier: cellId)
         tableView.dataSource = self
-      }
+        tableView.delegate = self
+        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        tableView.backgroundColor = .yp_Black
+    }
     func configureTable(){
         view.addSubview(tableView)
-        tableView.rowHeight = 200
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
         tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
@@ -42,37 +44,51 @@ class ImagesListViewController: UIViewController {
     
 }
 extension ImagesListViewController: UITableViewDataSource {
-  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-      return imageLists.count
-  }
-
-  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-    let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ImageCell
-      let currentImage = imageLists[indexPath.row]
-      cell.configure(with: currentImage)
-    return cell
-  }
-}
-
-//MARK: - SwiftUI
-import SwiftUI
-struct ImagesListVCProvider: PreviewProvider{
-    
-    static var previews: some View{
-        ContainerView().edgesIgnoringSafeArea(.all)
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return imageLists.count
     }
     
-    struct ContainerView: UIViewControllerRepresentable {
-        
-        let tabBarVC = ImagesListViewController()
-        
-        func makeUIViewController(context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) ->
-        ImagesListViewController{
-            return tabBarVC
-        }
-        func updateUIViewController(_ uiViewController: ImagesListVCProvider.ContainerView.UIViewControllerType, context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) {
-            
-        }
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ImageCell
+        let currentImage = imageLists[indexPath.row]
+        cell.configure(with: currentImage)
+        return cell
     }
-    
 }
+extension ImagesListViewController: UITableViewDelegate{
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+    }
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        guard let image = UIImage(named: imageLists[indexPath.row].image) else {return 0}
+        let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
+        let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
+        let imageWidth = image.size.width
+        let scale = imageViewWidth / imageWidth
+        let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
+        return cellHeight
+    }
+}
+//
+////MARK: - SwiftUI
+//import SwiftUI
+//struct ImagesListVCProvider: PreviewProvider{
+//    
+//    static var previews: some View{
+//        ContainerView().edgesIgnoringSafeArea(.all)
+//    }
+//    
+//    struct ContainerView: UIViewControllerRepresentable {
+//        
+//        let tabBarVC = ImagesListViewController()
+//        
+//        func makeUIViewController(context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) ->
+//        ImagesListViewController{
+//            return tabBarVC
+//        }
+//        func updateUIViewController(_ uiViewController: ImagesListVCProvider.ContainerView.UIViewControllerType, context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) {
+//            
+//        }
+//    }
+//    
+//}

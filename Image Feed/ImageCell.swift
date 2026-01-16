@@ -13,12 +13,26 @@ protocol SelfConfiguringCell {
 }
 class ImageCell: UITableViewCell, SelfConfiguringCell {
     static var reuseID = "ImagesListCell"
-    var imagesView = UIImageView()
-    var likes = UIButton()
-    var dateOfPublic = UILabel()
+    
+    private lazy var imagesView: UIImageView = {
+        let imagesView = UIImageView()
+        imagesView.sizeToFit()
+        return imagesView
+    }()
+    
+    private lazy var likes: UIButton = {
+        let likes = UIButton()
+        return likes
+    }()
+    
+    private lazy var dateOfPublic: UILabel = {
+        let dateOfPublic = UILabel()
+        return dateOfPublic
+    }()
+    
     
     func configure(with value: ImageViewCell) {
-        imagesView.image = value.image
+        imagesView.image = UIImage(named: value.image)
         likes.isEnabled = value.like
         dateOfPublic.text = value.date
     }
@@ -47,8 +61,7 @@ extension ImageCell{
         NSLayoutConstraint.activate([
             imagesView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
             imagesView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
-            imagesView.heightAnchor.constraint(equalToConstant: 40),
-            imagesView.widthAnchor.constraint(equalToConstant: 40)
+
         ])
         NSLayoutConstraint.activate([
             likes.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),

@@ -8,7 +8,7 @@
 import UIKit
 
 struct ImageViewCell{
-    var image: UIImage
+    var image: String
     var like: Bool
     var date: String
 }
