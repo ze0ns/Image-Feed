@@ -13,10 +13,10 @@ protocol SelfConfiguringCell {
 }
 class ImageCell: UITableViewCell, SelfConfiguringCell {
     static var reuseID = "ImagesListCell"
+    var imageHigth:CGFloat = 100
     
     private lazy var imagesView: UIImageView = {
         let imagesView = UIImageView()
-        imagesView.sizeToFit()
         return imagesView
     }()
     
@@ -33,6 +33,7 @@ class ImageCell: UITableViewCell, SelfConfiguringCell {
     
     func configure(with value: ImageViewCell) {
         imagesView.image = UIImage(named: value.image)
+        imagesView.layer.cornerRadius = 16
         likes.isEnabled = value.like
         dateOfPublic.text = value.date
     }
@@ -49,6 +50,7 @@ class ImageCell: UITableViewCell, SelfConfiguringCell {
 //MARK: - Setup Constrains
 extension ImageCell{
     private func setupConstraints(){
+        
         imagesView.translatesAutoresizingMaskIntoConstraints = false
         likes.translatesAutoresizingMaskIntoConstraints = false
         dateOfPublic.translatesAutoresizingMaskIntoConstraints = false
@@ -59,8 +61,11 @@ extension ImageCell{
 
         
         NSLayoutConstraint.activate([
+            imagesView.topAnchor.constraint(equalTo: self.topAnchor, constant: 20),
             imagesView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            imagesView.centerYAnchor.constraint(equalTo: self.centerYAnchor),
+            imagesView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 20),
+            imagesView.heightAnchor.constraint(equalTo: self.heightAnchor),
+            imagesView.widthAnchor.constraint(equalTo: self.widthAnchor)
 
         ])
         NSLayoutConstraint.activate([

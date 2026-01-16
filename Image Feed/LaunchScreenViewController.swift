@@ -30,8 +30,8 @@ class ImagesListViewController: UIViewController {
         tableView.register(ImageCell.self, forCellReuseIdentifier: cellId)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         tableView.backgroundColor = .yp_Black
+        tableView.separatorStyle = .none
     }
     func configureTable(){
         view.addSubview(tableView)
@@ -70,25 +70,25 @@ extension ImagesListViewController: UITableViewDelegate{
     }
 }
 //
-////MARK: - SwiftUI
-//import SwiftUI
-//struct ImagesListVCProvider: PreviewProvider{
-//    
-//    static var previews: some View{
-//        ContainerView().edgesIgnoringSafeArea(.all)
-//    }
-//    
-//    struct ContainerView: UIViewControllerRepresentable {
-//        
-//        let tabBarVC = ImagesListViewController()
-//        
-//        func makeUIViewController(context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) ->
-//        ImagesListViewController{
-//            return tabBarVC
-//        }
-//        func updateUIViewController(_ uiViewController: ImagesListVCProvider.ContainerView.UIViewControllerType, context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) {
-//            
-//        }
-//    }
-//    
-//}
+//MARK: - SwiftUI
+import SwiftUI
+struct ImagesListVCProvider: PreviewProvider{
+    
+    static var previews: some View{
+        ContainerView().edgesIgnoringSafeArea(.all)
+    }
+    
+    struct ContainerView: UIViewControllerRepresentable {
+        
+        let tabBarVC = ImagesListViewController()
+        
+        func makeUIViewController(context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) ->
+        ImagesListViewController{
+            return tabBarVC
+        }
+        func updateUIViewController(_ uiViewController: ImagesListVCProvider.ContainerView.UIViewControllerType, context: UIViewControllerRepresentableContext<ImagesListVCProvider.ContainerView>) {
+            
+        }
+    }
+    
+}
