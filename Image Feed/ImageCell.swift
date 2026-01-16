@@ -9,77 +9,98 @@ import UIKit
 
 protocol SelfConfiguringCell {
     static var reuseID: String {get}
-    func configure(with value: ImageViewCell)
 }
 class ImageCell: UITableViewCell, SelfConfiguringCell {
     static var reuseID = "ImagesListCell"
-    var imageHigth:CGFloat = 100
     
-    private lazy var imagesView: UIImageView = {
-        let imagesView = UIImageView()
-        return imagesView
-    }()
-    
-    private lazy var likes: UIButton = {
-        let likes = UIButton()
-        return likes
-    }()
-    
-    private lazy var dateOfPublic: UILabel = {
-        let dateOfPublic = UILabel()
-        return dateOfPublic
-    }()
-    
-    
-    func configure(with value: ImageViewCell) {
-        imagesView.image = UIImage(named: value.image)
-        imagesView.layer.cornerRadius = 16
-        likes.isEnabled = value.like
-        dateOfPublic.text = value.date
-    }
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-}
-//MARK: - Setup Constrains
-extension ImageCell{
-    private func setupConstraints(){
-        
-        imagesView.translatesAutoresizingMaskIntoConstraints = false
-        likes.translatesAutoresizingMaskIntoConstraints = false
-        dateOfPublic.translatesAutoresizingMaskIntoConstraints = false
-           
-        addSubview(imagesView)
-        addSubview(likes)
-        addSubview(dateOfPublic)
-
-        
-        NSLayoutConstraint.activate([
-            imagesView.topAnchor.constraint(equalTo: self.topAnchor, constant: 20),
-            imagesView.leadingAnchor.constraint(equalTo: self.leadingAnchor, constant: 20),
-            imagesView.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: 20),
-            imagesView.heightAnchor.constraint(equalTo: self.heightAnchor),
-            imagesView.widthAnchor.constraint(equalTo: self.widthAnchor)
-
-        ])
-        NSLayoutConstraint.activate([
-            likes.topAnchor.constraint(equalTo: self.topAnchor, constant: 16),
-            likes.leadingAnchor.constraint(equalTo: imagesView.trailingAnchor, constant: 16),
-            likes.trailingAnchor.constraint(equalTo: dateOfPublic.trailingAnchor, constant: -20)
-        ])
-        NSLayoutConstraint.activate([
-            dateOfPublic.bottomAnchor.constraint(equalTo: self.bottomAnchor, constant: -14),
-            dateOfPublic.leadingAnchor.constraint(equalTo: likes.trailingAnchor, constant: 16)
-        ])
-
-
-}
-}
+      // UI-элементы
+      private let imagesView = UIImageView()
+      private let titleLabel = UILabel()
+      private let dateLabel = UILabel()
+      
+      private var imageHeightConstraint: NSLayoutConstraint!
+      
+      
+      override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+          super.init(style: style, reuseIdentifier: reuseIdentifier)
+          setupViews()
+          setupConstraints()
+      }
+      
+      required init?(coder aDecoder: NSCoder) {
+          fatalError("init(coder:) has not been implemented")
+      }
+      
+      // Настройка UI
+      private func setupViews() {
+          // ImageView
+          imagesView.contentMode = .scaleAspectFill
+          imagesView.clipsToBounds = true
+          imagesView.translatesAutoresizingMaskIntoConstraints = false
+          
+          // Title Label
+          titleLabel.font = .systemFont(ofSize: 16, weight: .semibold)
+          titleLabel.numberOfLines = 0
+          titleLabel.translatesAutoresizingMaskIntoConstraints = false
+          // Date Label
+          dateLabel.font = .systemFont(ofSize: 12, weight: .regular)
+          dateLabel.textColor = .secondaryLabel
+          dateLabel.translatesAutoresizingMaskIntoConstraints = false
+          
+          
+          // Добавляем в contentView
+          contentView.addSubview(imagesView)
+          contentView.addSubview(titleLabel)
+          contentView.addSubview(dateLabel)
+      }
+      
+      // Ограничения Auto Layout
+      private func setupConstraints() {
+          NSLayoutConstraint.activate([
+              // ImageView: растягивается по ширине, высота динамическая
+              imagesView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+              imagesView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+              imagesView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 12),
+              
+              // TitleLabel под ImageView
+              titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+              titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+              titleLabel.topAnchor.constraint(equalTo: imagesView.bottomAnchor, constant: 8),
+              
+              // DateLabel под TitleLabel
+              dateLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+              dateLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+              dateLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 4),
+              dateLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor, constant: -12)
+          ])
+          
+          
+          // Ограничение высоты ImageView (будет обновляться)
+          imageHeightConstraint = imagesView.heightAnchor.constraint(equalToConstant: 0)
+          imageHeightConstraint.isActive = true
+      }
+      
+      // Метод для заполнения данными
+      func configure(
+          image: UIImage,
+          title: String,
+          date: String,
+          maxImageWidth: CGFloat
+      ) {
+          // 1. Устанавливаем изображение
+          imagesView.image = image
+          
+          // 2. Рассчитываем высоту изображения с сохранением пропорций
+          let imageAspect = image.size.height / image.size.width
+          let calculatedHeight = maxImageWidth * imageAspect
+          
+          imageHeightConstraint.constant = calculatedHeight
+          
+          
+          // 3. Заполняем текст
+          titleLabel.text = title
+          dateLabel.text = date
+      }
+  }
 
 

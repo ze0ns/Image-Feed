@@ -51,7 +51,13 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ImageCell
         let currentImage = imageLists[indexPath.row]
-        cell.configure(with: currentImage)
+        let maxImageWidth = tableView.bounds.width - 32 // Отступы по 16 pt с каждой стороны
+        cell.configure(
+            image: currentImage.image,
+            title: currentImage.date,
+            date: currentImage.date,
+            maxImageWidth: maxImageWidth
+        )
         return cell
     }
 }
@@ -59,15 +65,7 @@ extension ImagesListViewController: UITableViewDelegate{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
     }
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let image = UIImage(named: imageLists[indexPath.row].image) else {return 0}
-        let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
-        let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-        let imageWidth = image.size.width
-        let scale = imageViewWidth / imageWidth
-        let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
-        return cellHeight
-    }
+    
 }
 //
 //MARK: - SwiftUI
