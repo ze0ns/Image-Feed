@@ -47,6 +47,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06020D3C2F1B5E6500AE73BA /* ImagesListCell */ = {
+			isa = PBXGroup;
+			children = (
+				0604D3592F18F15A005C4A8C /* LaunchScreenViewController.swift */,
+				0683506D2F19F90200DF7E6D /* ImageCell.swift */,
+			);
+			path = ImagesListCell;
+			sourceTree = "<group>";
+		};
 		068350712F19FF8F00DF7E6D /* MockData */ = {
 			isa = PBXGroup;
 			children = (
@@ -90,11 +99,10 @@
 		7D9CFA4128DDEE7F00D971A7 /* Image Feed */ = {
 			isa = PBXGroup;
 			children = (
+				06020D3C2F1B5E6500AE73BA /* ImagesListCell */,
 				068E123C2F1ABE51006531F8 /* Model */,
 				0683507F2F1A216B00DF7E6D /* Helpers */,
 				068350712F19FF8F00DF7E6D /* MockData */,
-				0604D3592F18F15A005C4A8C /* LaunchScreenViewController.swift */,
-				0683506D2F19F90200DF7E6D /* ImageCell.swift */,
 				7D9CFA4228DDEE7F00D971A7 /* AppDelegate.swift */,
 				7D9CFA4428DDEE7F00D971A7 /* SceneDelegate.swift */,
 				8F95384A28F4022B005B83F0 /* ViewController.swift */,
