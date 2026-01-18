@@ -12,6 +12,7 @@
 		068350702F19F98C00DF7E6D /* ImageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */; };
 		068350732F1A051A00DF7E6D /* ImagesViewMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350722F1A051A00DF7E6D /* ImagesViewMock.swift */; };
 		068350812F1A217800DF7E6D /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350802F1A217800DF7E6D /* UIColor+Extensions.swift */; };
+		068FD0EE2F1CB53B0073BE5A /* ImagesListVCProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068FD0ED2F1CB53B0073BE5A /* ImagesListVCProvider.swift */; };
 		7D9CFA4328DDEE7F00D971A7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9CFA4228DDEE7F00D971A7 /* AppDelegate.swift */; };
 		7D9CFA4528DDEE7F00D971A7 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D9CFA4428DDEE7F00D971A7 /* SceneDelegate.swift */; };
 		7D9CFA4A28DDEE7F00D971A7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7D9CFA4828DDEE7F00D971A7 /* Main.storyboard */; };
@@ -26,6 +27,7 @@
 		0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewCell.swift; sourceTree = "<group>"; };
 		068350722F1A051A00DF7E6D /* ImagesViewMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewMock.swift; sourceTree = "<group>"; };
 		068350802F1A217800DF7E6D /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		068FD0ED2F1CB53B0073BE5A /* ImagesListVCProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListVCProvider.swift; sourceTree = "<group>"; };
 		7D9CFA3F28DDEE7F00D971A7 /* Image Feed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Image Feed.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7D9CFA4228DDEE7F00D971A7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7D9CFA4428DDEE7F00D971A7 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -53,6 +55,7 @@
 				068FD0EA2F1CAE2D0073BE5A /* Extension */,
 				0604D3592F18F15A005C4A8C /* LaunchScreenViewController.swift */,
 				0683506D2F19F90200DF7E6D /* ImageCell.swift */,
+				068FD0ED2F1CB53B0073BE5A /* ImagesListVCProvider.swift */,
 			);
 			path = ImagesListCell;
 			sourceTree = "<group>";
@@ -201,6 +204,7 @@
 				0604D35A2F18F15A005C4A8C /* LaunchScreenViewController.swift in Sources */,
 				7D9CFA4528DDEE7F00D971A7 /* SceneDelegate.swift in Sources */,
 				0683506E2F19F90200DF7E6D /* ImageCell.swift in Sources */,
+				068FD0EE2F1CB53B0073BE5A /* ImagesListVCProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
