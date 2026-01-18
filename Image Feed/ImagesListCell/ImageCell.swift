@@ -10,27 +10,29 @@ import UIKit
 protocol SelfConfiguringCell {
     static var reuseID: String {get}
 }
-class ImageCell: UITableViewCell, SelfConfiguringCell {
+final class ImageCell: UITableViewCell, SelfConfiguringCell {
     static var reuseID = "ImagesListCell"
     
     // MARK: - Private Properties
     private let imagesView = UIImageView()
-    private var isLiked: Bool = false
+    private lazy var isLiked: Bool = false
     private let dateLabel = UILabel()
-    private var like: UIButton = UIButton()
+    private lazy var like: UIButton = UIButton()
 
     private var imageHeightConstraint: NSLayoutConstraint!
     
     // MARK: - Lifecycle
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = .yp_Black
+        backgroundColor = .ypBlack
         setupViews()
         setupConstraints()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        nil
     }
     // MARK: - Private Methods, setup View
     private func setupViews() {
@@ -43,7 +45,7 @@ class ImageCell: UITableViewCell, SelfConfiguringCell {
         like.translatesAutoresizingMaskIntoConstraints = false
         
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
-        dateLabel.textColor = .yp_White
+        dateLabel.textColor = .ypWhite
         dateLabel.translatesAutoresizingMaskIntoConstraints = false
         
         contentView.addSubview(imagesView)
