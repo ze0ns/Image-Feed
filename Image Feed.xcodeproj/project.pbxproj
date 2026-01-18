@@ -52,7 +52,6 @@
 		06020D3C2F1B5E6500AE73BA /* ImagesListCell */ = {
 			isa = PBXGroup;
 			children = (
-				068FD0EA2F1CAE2D0073BE5A /* Extension */,
 				0604D3592F18F15A005C4A8C /* LaunchScreenViewController.swift */,
 				0683506D2F19F90200DF7E6D /* ImageCell.swift */,
 				068FD0ED2F1CB53B0073BE5A /* ImagesListVCProvider.swift */,
@@ -82,13 +81,6 @@
 				0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */,
 			);
 			path = Model;
-			sourceTree = "<group>";
-		};
-		068FD0EA2F1CAE2D0073BE5A /* Extension */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Extension;
 			sourceTree = "<group>";
 		};
 		7D9CFA3628DDEE7F00D971A7 = {
