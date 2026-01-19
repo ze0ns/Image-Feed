@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0604D35A2F18F15A005C4A8C /* LaunchScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604D3592F18F15A005C4A8C /* LaunchScreenViewController.swift */; };
+		0604D35A2F18F15A005C4A8C /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604D3592F18F15A005C4A8C /* ImagesListViewController.swift */; };
 		0683506E2F19F90200DF7E6D /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0683506D2F19F90200DF7E6D /* ImageCell.swift */; };
 		068350702F19F98C00DF7E6D /* ImageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */; };
 		068350732F1A051A00DF7E6D /* ImagesViewMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350722F1A051A00DF7E6D /* ImagesViewMock.swift */; };
@@ -21,7 +21,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0604D3592F18F15A005C4A8C /* LaunchScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreenViewController.swift; sourceTree = "<group>"; };
+		0604D3592F18F15A005C4A8C /* ImagesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewController.swift; sourceTree = "<group>"; };
 		0683506D2F19F90200DF7E6D /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 		0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewCell.swift; sourceTree = "<group>"; };
 		068350722F1A051A00DF7E6D /* ImagesViewMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewMock.swift; sourceTree = "<group>"; };
@@ -50,7 +50,7 @@
 		06020D3C2F1B5E6500AE73BA /* ImagesListCell */ = {
 			isa = PBXGroup;
 			children = (
-				0604D3592F18F15A005C4A8C /* LaunchScreenViewController.swift */,
+				0604D3592F18F15A005C4A8C /* ImagesListViewController.swift */,
 				0683506D2F19F90200DF7E6D /* ImageCell.swift */,
 			);
 			path = ImagesListCell;
@@ -190,7 +190,7 @@
 				8F95384B28F4022B005B83F0 /* ViewController.swift in Sources */,
 				068350812F1A217800DF7E6D /* UIColor+Extensions.swift in Sources */,
 				7D9CFA4328DDEE7F00D971A7 /* AppDelegate.swift in Sources */,
-				0604D35A2F18F15A005C4A8C /* LaunchScreenViewController.swift in Sources */,
+				0604D35A2F18F15A005C4A8C /* ImagesListViewController.swift in Sources */,
 				7D9CFA4528DDEE7F00D971A7 /* SceneDelegate.swift in Sources */,
 				0683506E2F19F90200DF7E6D /* ImageCell.swift in Sources */,
 			);

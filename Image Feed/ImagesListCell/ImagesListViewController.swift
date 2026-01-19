@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImagesListViewController: UIViewController {
+final class ImagesListViewController: UIViewController {
     // MARK: - Private Properties
     private let tableView = UITableView()
     private var imageLists =  ImagesListViewController.imagesListMock
@@ -24,7 +24,7 @@ class ImagesListViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .yp_Black
+        view.backgroundColor = .ypBlack
         setupTableView()
         configureTable()
     }
@@ -33,16 +33,18 @@ class ImagesListViewController: UIViewController {
         tableView.register(ImageCell.self, forCellReuseIdentifier: cellId)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.backgroundColor = .yp_Black
+        tableView.backgroundColor = .ypBlack
         tableView.separatorStyle = .none
     }
     private func configureTable(){
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        tableView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        tableView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.leftAnchor.constraint(equalTo: view.leftAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
+    ])
     }
     
 }
@@ -56,13 +58,13 @@ extension ImagesListViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ImageCell
         let currentImage = imageLists[indexPath.row]
         let maxImageWidth = tableView.bounds.width - 16
-        let likeImage = (currentImage.like ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off"))
             cell.configure(
                 image: currentImage.image,
-                islike: likeImage!,
+                islike: UIImage(resource: currentImage.like ? .likeButtonOn : .likeButtonOff),
                 date: dateFormatter.string(from: Date()),
                 maxImageWidth: maxImageWidth
             )
+        cell.selectionStyle = .none
         return cell
     }
 }
