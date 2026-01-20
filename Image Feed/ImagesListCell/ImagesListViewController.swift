@@ -27,6 +27,7 @@ final class ImagesListViewController: UIViewController {
         view.backgroundColor = .ypBlack
         setupTableView()
         configureTable()
+
     }
     // MARK: - Private Methods
     private func setupTableView() {
@@ -46,6 +47,10 @@ final class ImagesListViewController: UIViewController {
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
     ])
     }
+    private func changeRootToDestination() {
+              let navController = UINavigationController(rootViewController: SingleImageViewController())
+              present(navController, animated: true)
+        }
     
 }
 // MARK: - Extension TableViewCell 
@@ -70,7 +75,7 @@ extension ImagesListViewController: UITableViewDataSource {
 }
 extension ImagesListViewController: UITableViewDelegate{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        changeRootToDestination()
     }
 }
 //
