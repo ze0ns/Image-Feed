@@ -33,22 +33,22 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        view.backgroundColor = .ypBlack
         setupViews()
         setupConstraints()
     }
     
     private func setupViews(){
         userFIO.text = "Екатерина Новикова"
-        userFIO.textColor = .white
+        userFIO.textColor = .ypWhite
         userFIO.font = .boldSystemFont(ofSize: 23)
         
         loginName.text = "@ekaterina_nov"
-        loginName.textColor = .gray
+        loginName.textColor = .ypGray
         loginName.font = .systemFont(ofSize: 13)
         
         comments.text = "Hello, world!"
-        comments.textColor = .white
+        comments.textColor = .ypWhite
         comments.font = .systemFont(ofSize: 13)
         
         avatar.translatesAutoresizingMaskIntoConstraints = false

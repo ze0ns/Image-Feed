@@ -59,13 +59,14 @@ class CustomTabBar: UIView {
 
     @objc private func buttonTapped(_ sender: UIButton) {
         selectedIndex = sender.tag
-        onItemSelected?(selectedIndex)  // Вызываем замыкание
+        onItemSelected?(selectedIndex)
+        
     }
 
     private func updateSelection() {
         for (index, button) in buttons.enumerated() {
             button.isSelected = (index == selectedIndex)
-            button.tintColor = index == selectedIndex ? .label : .secondaryLabel
+            button.tintColor = index == selectedIndex ? .ypWhite : .ypWhite50
         }
     }
 

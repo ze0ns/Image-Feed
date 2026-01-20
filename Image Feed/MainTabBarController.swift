@@ -22,13 +22,13 @@ class MainTabBarController: UITabBarController {
 
         // Элементы вкладок
         let tabItems = [
-            UITabBarItem(title: "", image: UIImage(systemName: "house"), tag: 0),
-            UITabBarItem(title: "", image: UIImage(systemName: "person.circle"), tag: 1)
+            UITabBarItem(title: "", image: UIImage(resource: .activeLenta), tag: 0),
+            UITabBarItem(title: "", image: UIImage(resource: .activeProfile), tag: 1)
         ]
 
         // Создаём кастомный TabBar
         customTabBar = CustomTabBar(items: tabItems)
-        customTabBar.backgroundColor = .blue
+        customTabBar.backgroundColor = .ypBlack
         customTabBar.height = customTabBarHeight
         customTabBar.translatesAutoresizingMaskIntoConstraints = false
 
