@@ -25,16 +25,29 @@ class SingleImageViewController: UIViewController {
     
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "arrow.left"), for: .normal)
-        button.tintColor = .label
+        button.setImage(UIImage(resource: .backward), for: .normal)
+        button.tintColor = .ypWhite
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(backToFirstScreen), for: .touchUpInside)
+        return button
+    }()
+    private lazy var shareButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(resource: .sharing), for: .normal)
+        button.tintColor = .ypWhite
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(didTapShareButton), for: .touchUpInside)
         return button
     }()
     
     // MARK: - Жизненный цикл
     override func viewDidLoad() {
         super.viewDidLoad()
+        scrollView.minimumZoomScale = 0.1
+        scrollView.maximumZoomScale = 1.25
+        guard let imageURL else { return }
+        imageView.image = imageURL
+        imageView.frame.size = imageURL.size
         setupViews()
         setupConstraints()
         configureScrollView()
@@ -63,6 +76,7 @@ class SingleImageViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
         view.addSubview(backButton)
+        view.addSubview(shareButton)
     }
     
     private func setupConstraints() {
@@ -80,19 +94,24 @@ class SingleImageViewController: UIViewController {
             imageView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
             
             // BackButton
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 11),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 9),
+            backButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 53),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 8),
             backButton.widthAnchor.constraint(equalToConstant: 24),
-            backButton.heightAnchor.constraint(equalToConstant: 24)
+            backButton.heightAnchor.constraint(equalToConstant: 24),
+            
+            // BackButton
+            shareButton.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -61),
+            shareButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            shareButton.widthAnchor.constraint(equalToConstant: 50),
+            shareButton.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
     // MARK: - Настройка ScrollView
     private func configureScrollView() {
         scrollView.delegate = self
-        scrollView.minimumZoomScale = 1.0
-        scrollView.maximumZoomScale = 3.0
-        scrollView.bouncesZoom = true
+        scrollView.minimumZoomScale = 0.1
+        scrollView.maximumZoomScale = 1.25
         scrollView.bounces = true
     }
     
@@ -118,6 +137,14 @@ class SingleImageViewController: UIViewController {
         let sourceVC = MainTabBarController()
         navController.setViewControllers([sourceVC], animated: true)
     }
+    @objc private func didTapShareButton(_ sender: UIButton) {
+       guard let imageURL else { return }
+       let share = UIActivityViewController(
+           activityItems: [imageURL],
+           applicationActivities: nil
+       )
+       present(share, animated: true, completion: nil)
+   }
 }
 
 // MARK: - UIScrollViewDelegate
