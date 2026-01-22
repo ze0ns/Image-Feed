@@ -59,7 +59,6 @@
 			isa = PBXGroup;
 			children = (
 				0604D3592F18F15A005C4A8C /* ImagesListViewController.swift */,
-				068844132F1F4AAF009E08CC /* SingleImageViewController.swift */,
 				0683506D2F19F90200DF7E6D /* ImageCell.swift */,
 			);
 			path = ImagesListCell;
@@ -98,6 +97,14 @@
 			path = Profiles;
 			sourceTree = "<group>";
 		};
+		069959722F21F4A600967226 /* SingleImage */ = {
+			isa = PBXGroup;
+			children = (
+				068844132F1F4AAF009E08CC /* SingleImageViewController.swift */,
+			);
+			path = SingleImage;
+			sourceTree = "<group>";
+		};
 		7D9CFA3628DDEE7F00D971A7 = {
 			isa = PBXGroup;
 			children = (
@@ -117,6 +124,7 @@
 		7D9CFA4128DDEE7F00D971A7 /* Image Feed */ = {
 			isa = PBXGroup;
 			children = (
+				069959722F21F4A600967226 /* SingleImage */,
 				0694B3BD2F1E7057000EF4F0 /* Profiles */,
 				06020D3C2F1B5E6500AE73BA /* ImagesListCell */,
 				068E123C2F1ABE51006531F8 /* Model */,

@@ -9,7 +9,7 @@ import UIKit
 
 class ProfileViewController: UIViewController {
     
-    
+    // MARK: - Private Properties
     private lazy var userFIO = UILabel()
     private lazy var loginName = UILabel()
     private lazy var comments = UILabel()
@@ -30,14 +30,14 @@ class ProfileViewController: UIViewController {
     }()
     
     
-    
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlack
         setupViews()
         setupConstraints()
     }
-    
+    // MARK: - Private Methods, configure UI
     private func setupViews(){
         userFIO.text = "Екатерина Новикова"
         userFIO.textColor = .ypWhite
@@ -63,6 +63,7 @@ class ProfileViewController: UIViewController {
         view.addSubview(comments)
         
     }
+    // MARK: - Private Methods, configure Constraints
     private func setupConstraints(){
         NSLayoutConstraint.activate([
             avatar.topAnchor.constraint(equalTo: view.topAnchor, constant: 76),
@@ -90,7 +91,7 @@ class ProfileViewController: UIViewController {
             comments.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
         ])
     }
-    
+    // MARK: - Public Methods
     func configure(
         avatarGet: UIImage,
         loginNameGet: String,

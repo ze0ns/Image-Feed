@@ -8,12 +8,7 @@
 import UIKit
 
 class SingleImageViewController: UIViewController {
-    
-    // MARK: - Свойства
-    private let scrollView = UIScrollView()
-    private let imageView = UIImageView()
-    
-    
+    // MARK: - Public Properties
     var imageURL: UIImage? {
         didSet {
             imageView.image = imageURL
@@ -22,7 +17,9 @@ class SingleImageViewController: UIViewController {
             rescaleAndCenterImageInScrollView(image: imageURL)
         }
     }
-    
+    // MARK: - Private Properties
+    private let scrollView = UIScrollView()
+    private let imageView = UIImageView()
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(resource: .backward), for: .normal)
@@ -40,7 +37,7 @@ class SingleImageViewController: UIViewController {
         return button
     }()
     
-    // MARK: - Жизненный цикл
+    // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         scrollView.minimumZoomScale = 0.1
@@ -59,7 +56,7 @@ class SingleImageViewController: UIViewController {
         rescaleAndCenterImageInScrollView(image: imageURL)
     }
     
-    // MARK: - Настройка интерфейса
+    // MARK: - Private Properties, configure UI
     private func setupViews() {
         // ScrollView
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -68,7 +65,7 @@ class SingleImageViewController: UIViewController {
         scrollView.showsHorizontalScrollIndicator = false
         
         // ImageView
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -78,7 +75,7 @@ class SingleImageViewController: UIViewController {
         view.addSubview(backButton)
         view.addSubview(shareButton)
     }
-    
+    // MARK: - Private Properties, configure Constraints
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             // ScrollView занимает весь экран
@@ -86,6 +83,7 @@ class SingleImageViewController: UIViewController {
             scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
             
             // ImageView внутри ScrollView
             imageView.topAnchor.constraint(equalTo: scrollView.topAnchor),
@@ -107,12 +105,20 @@ class SingleImageViewController: UIViewController {
         ])
     }
     
-    // MARK: - Настройка ScrollView
+    // MARK: - Private Properties, configure ScrollView
     private func configureScrollView() {
         scrollView.delegate = self
-        scrollView.minimumZoomScale = 0.1
-        scrollView.maximumZoomScale = 1.25
+        guard  let imageURL else { return }
+        let imageSize = imageURL.size
+        let screenSize = UIScreen.main.bounds.size
+        let widthRatio = screenSize.width / imageSize.width
+        let heightRatio = screenSize.height / imageSize.height
+        let minScale = max(widthRatio, heightRatio)
         scrollView.bounces = true
+        scrollView.minimumZoomScale = minScale
+        scrollView.maximumZoomScale = 1.25
+        scrollView.zoomScale = minScale
+        
     }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
@@ -131,20 +137,20 @@ class SingleImageViewController: UIViewController {
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
-    // MARK: - Действия
+    // MARK: - Actions
     @objc private func backToFirstScreen() {
         guard let navController = navigationController else { return }
         let sourceVC = MainTabBarController()
         navController.setViewControllers([sourceVC], animated: true)
     }
     @objc private func didTapShareButton(_ sender: UIButton) {
-       guard let imageURL else { return }
-       let share = UIActivityViewController(
-           activityItems: [imageURL],
-           applicationActivities: nil
-       )
-       present(share, animated: true, completion: nil)
-   }
+        guard let imageURL else { return }
+        let share = UIActivityViewController(
+            activityItems: [imageURL],
+            applicationActivities: nil
+        )
+        present(share, animated: true, completion: nil)
+    }
 }
 
 // MARK: - UIScrollViewDelegate
