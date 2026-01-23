@@ -13,7 +13,6 @@
 		068350732F1A051A00DF7E6D /* ImagesViewMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350722F1A051A00DF7E6D /* ImagesViewMock.swift */; };
 		068350812F1A217800DF7E6D /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350802F1A217800DF7E6D /* UIColor+Extensions.swift */; };
 		068844142F1F4AAF009E08CC /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068844132F1F4AAF009E08CC /* SingleImageViewController.swift */; };
-		068844162F1F4B17009E08CC /* UIBarButtonItem+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068844152F1F4B17009E08CC /* UIBarButtonItem+Extension.swift */; };
 		0694B3BF2F1E7066000EF4F0 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0694B3BE2F1E7066000EF4F0 /* ProfileViewController.swift */; };
 		0694B3C12F1E709E000EF4F0 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0694B3C02F1E709E000EF4F0 /* MainTabBarController.swift */; };
 		0694B3C32F1E70D2000EF4F0 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0694B3C22F1E70D2000EF4F0 /* CustomTabBar.swift */; };
@@ -31,7 +30,6 @@
 		068350722F1A051A00DF7E6D /* ImagesViewMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewMock.swift; sourceTree = "<group>"; };
 		068350802F1A217800DF7E6D /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		068844132F1F4AAF009E08CC /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
-		068844152F1F4B17009E08CC /* UIBarButtonItem+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIBarButtonItem+Extension.swift"; sourceTree = "<group>"; };
 		0694B3BE2F1E7066000EF4F0 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		0694B3C02F1E709E000EF4F0 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabBarController.swift; sourceTree = "<group>"; };
 		0694B3C22F1E70D2000EF4F0 /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
@@ -75,7 +73,6 @@
 		0683507F2F1A216B00DF7E6D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				068844152F1F4B17009E08CC /* UIBarButtonItem+Extension.swift */,
 				068350802F1A217800DF7E6D /* UIColor+Extensions.swift */,
 			);
 			path = Helpers;
@@ -217,7 +214,6 @@
 				068350732F1A051A00DF7E6D /* ImagesViewMock.swift in Sources */,
 				068350702F19F98C00DF7E6D /* ImageViewCell.swift in Sources */,
 				0694B3C12F1E709E000EF4F0 /* MainTabBarController.swift in Sources */,
-				068844162F1F4B17009E08CC /* UIBarButtonItem+Extension.swift in Sources */,
 				068350812F1A217800DF7E6D /* UIColor+Extensions.swift in Sources */,
 				7D9CFA4328DDEE7F00D971A7 /* AppDelegate.swift in Sources */,
 				0604D35A2F18F15A005C4A8C /* ImagesListViewController.swift in Sources */,

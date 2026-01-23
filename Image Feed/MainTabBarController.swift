@@ -5,41 +5,34 @@
 //  Created by Oschepkov Aleksandr on 19.01.2026.
 //
 import UIKit
-class MainTabBarController: UITabBarController {
+final class MainTabBarController: UITabBarController {
     
     private let customTabBarHeight: CGFloat = 83
-    private var customTabBar: CustomTabBar!
-
+    private var customTabBar: CustomTabBar?
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCustomTabBar()
         makeUI()
     }
-
+    
     private func setupCustomTabBar() {
-        // Скрываем стандартный tabBar
         tabBar.isHidden = true
-
-        // Элементы вкладок
         let tabItems = [
             UITabBarItem(title: "", image: UIImage(resource: .activeLenta), tag: 0),
             UITabBarItem(title: "", image: UIImage(resource: .activeProfile), tag: 1)
         ]
-
-        // Создаём кастомный TabBar
+        guard var customTabBar = customTabBar else { return }
         customTabBar = CustomTabBar(items: tabItems)
         customTabBar.backgroundColor = .ypBlack
         customTabBar.height = customTabBarHeight
         customTabBar.translatesAutoresizingMaskIntoConstraints = false
-
-
-        // Обрабатываем выбор вкладки через замыкание
+        
         customTabBar.onItemSelected = { [weak self] index in
             self?.selectedIndex = index  // Переключаем вкладку
         }
-
+        
         view.addSubview(customTabBar)
-
+        
         NSLayoutConstraint.activate([
             customTabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             customTabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -52,9 +45,10 @@ class MainTabBarController: UITabBarController {
         let secondVC = ProfileViewController()
         viewControllers = [firstVC, secondVC]
     }
-    // Синхронизируем визуальный статус при переключении через контроллер
-     func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
+    
+    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
         guard let index = viewControllers?.firstIndex(of: viewController) else { return }
+        guard let customTabBar = customTabBar else { return }
         customTabBar.selectedIndex = index
     }
 }

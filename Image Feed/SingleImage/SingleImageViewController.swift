@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SingleImageViewController: UIViewController {
+final class SingleImageViewController: UIViewController {
     // MARK: - Public Properties
     var imageURL: UIImage? {
         didSet {
@@ -160,7 +160,6 @@ extension SingleImageViewController: UIScrollViewDelegate {
     }
     
     func scrollViewDidZoom(_ scrollView: UIScrollView) {
-        // Центрируем изображение при зуме
         let offsetX = max((scrollView.bounds.width - scrollView.contentSize.width) * 0.5, 0)
         let offsetY = max((scrollView.bounds.height - scrollView.contentSize.height) * 0.5, 0)
         

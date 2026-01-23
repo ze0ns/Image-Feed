@@ -1,36 +1,27 @@
 import UIKit
 
-class CustomTabBar: UIView {
-    
-    // Замыкание для уведомления о выборе вкладки
+final class CustomTabBar: UIView {
+    // MARK: - Public Properties
     var onItemSelected: ((Int) -> Void)?
-    
-    // Текущий выбранный индекс
     var selectedIndex: Int = 0 {
         didSet { updateSelection() }
     }
-    
-    // Высота панели
     var height: CGFloat = 83 {
         didSet { setNeedsLayout() }
     }
-    
-    // Элементы вкладок
     private var items: [UITabBarItem] = []
-    
-    // Кнопки вкладок
     private var buttons: [UIButton] = []
-
     init(items: [UITabBarItem]) {
         self.items = items
         super.init(frame: .zero)
         setupViews()
     }
     
+    @available(*, unavailable)
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) не поддерживается")
+        nil
     }
-
+    // MARK: - Private Methods
     private func setupViews() {
         for (index, item) in items.enumerated() {
             let button = UIButton(type: .custom)
@@ -43,8 +34,6 @@ class CustomTabBar: UIView {
                     for: .normal
                 )
             }
-            
-            // Стили
             button.setTitleColor(.secondaryLabel, for: .normal)
             button.setTitleColor(.label, for: .selected)
             button.tintColor = .secondaryLabel
@@ -56,20 +45,19 @@ class CustomTabBar: UIView {
         
         updateSelection()
     }
-
+    // MARK: - Actions
     @objc private func buttonTapped(_ sender: UIButton) {
         selectedIndex = sender.tag
         onItemSelected?(selectedIndex)
         
     }
-
     private func updateSelection() {
         for (index, button) in buttons.enumerated() {
             button.isSelected = (index == selectedIndex)
             button.tintColor = index == selectedIndex ? .ypWhite : .ypWhite50
         }
     }
-
+    // MARK: - Public Methods , UI
     override func layoutSubviews() {
         super.layoutSubviews()
         
@@ -93,7 +81,6 @@ class CustomTabBar: UIView {
             )
         }
     }
-
     override var intrinsicContentSize: CGSize {
         return CGSize(width: UIView.noIntrinsicMetric, height: height)
     }
