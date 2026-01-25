@@ -11,7 +11,6 @@ final class OAuth2Service {
     var networkClient = NetworkClient()
     private init() {}
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        completion(.success(""))
         guard let request = makeOAuthTokenRequest(code: code) else { return  }
         networkClient.fetch(request: request) { result in
             switch result {

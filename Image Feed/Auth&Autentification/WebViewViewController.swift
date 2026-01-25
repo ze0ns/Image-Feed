@@ -137,7 +137,6 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
         if let code = code(from: navigationAction) {
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             decisionHandler(.cancel)
-            print(code)
         } else {
             decisionHandler(.allow)
         }
@@ -151,7 +150,7 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
             let items = urlComponents.queryItems,
             let codeItem = items.first(where: {$0.name == "code"})
         {
-            print(codeItem.value)
+            print("Код итемс " + codeItem.value!)
             return codeItem.value
         } else {
             return nil
