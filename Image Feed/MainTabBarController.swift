@@ -8,20 +8,18 @@ import UIKit
 final class MainTabBarController: UITabBarController {
     
     private let customTabBarHeight: CGFloat = 83
-    private var customTabBar: CustomTabBar?
+    private var customTabBar: CustomTabBar!
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCustomTabBar()
         makeUI()
     }
-    
     private func setupCustomTabBar() {
         tabBar.isHidden = true
         let tabItems = [
             UITabBarItem(title: "", image: UIImage(resource: .activeLenta), tag: 0),
             UITabBarItem(title: "", image: UIImage(resource: .activeProfile), tag: 1)
         ]
-        guard var customTabBar = customTabBar else { return }
         customTabBar = CustomTabBar(items: tabItems)
         customTabBar.backgroundColor = .ypBlack
         customTabBar.height = customTabBarHeight

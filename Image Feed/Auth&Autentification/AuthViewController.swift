@@ -35,7 +35,6 @@ final class AuthViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-    
     // MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -43,6 +42,7 @@ final class AuthViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupActions()
+
     }
     
     // MARK: - Setup Methods
@@ -77,6 +77,13 @@ final class AuthViewController: UIViewController {
     @objc private func loginButtonTapped() {
         print("Кнопка 'Вход' нажата")
         let nextVC = WebViewViewController()
+        nextVC.delegate = self
+        let navController = UINavigationController(rootViewController: nextVC)
+        navController.modalPresentationStyle = .fullScreen
+        present(navController, animated: true)
+    }
+    private func goToMainTabBarController() {
+        let nextVC = MainTabBarController()
         let navController = UINavigationController(rootViewController: nextVC)
         navController.modalPresentationStyle = .fullScreen
         present(navController, animated: true)
@@ -88,6 +95,8 @@ final class AuthViewController: UIViewController {
           present(alert, animated: true)
       }
 }
+
+// MARK: Extensions
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
@@ -96,6 +105,9 @@ extension AuthViewController: WebViewViewControllerDelegate {
             switch result {
             case .success:
                 self.delegate?.didAuthenticate(self)
+                DispatchQueue.main.async{
+                    self.goToMainTabBarController()
+                }
             case .failure:
                 showErrorAlert("error")
                 break

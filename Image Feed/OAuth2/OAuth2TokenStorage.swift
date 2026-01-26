@@ -9,6 +9,7 @@
 import Foundation
 
 final class OAuth2TokenStorage {
+    // MARK: - Private Properties
     private var token: String? {
         get {
             UserDefaults.standard.string(forKey: "token")

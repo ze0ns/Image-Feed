@@ -7,9 +7,13 @@
 
 import Foundation
 final class OAuth2Service {
+    // MARK: Static Properties
     static let shared = OAuth2Service()
-    var networkClient = NetworkClient()
+    // MARK: Private Properties
+    private var networkClient = NetworkClient()
+    private var storageToken = OAuth2TokenStorage()
     private init() {}
+    // MARK: - Public Methods
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let request = makeOAuthTokenRequest(code: code) else { return  }
         networkClient.fetch(request: request) { result in
@@ -18,21 +22,23 @@ final class OAuth2Service {
                 do {
                     let decoder = JSONDecoder()
                     let  tokenBody = try decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    print(tokenBody.accessToken)
+                    self.storageToken.set(token: tokenBody.accessToken)
                     completion(.success(tokenBody.accessToken))
                 } catch {
+                    print(error)
                     completion(.failure(error))
                 }
             case .failure(let error):
+                print(error)
                 completion(.failure(error))
             }
         }
     }
+    // MARK: - Private Methods
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
             return nil
         }
-        
         urlComponents.queryItems = [
             URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
@@ -40,11 +46,9 @@ final class OAuth2Service {
             URLQueryItem(name: "code", value: code),
             URLQueryItem(name: "grant_type", value: "authorization_code"),
         ]
-        
         guard let authTokenUrl = urlComponents.url else {
             return nil
         }
-        
         var request = URLRequest(url: authTokenUrl)
         request.httpMethod = "POST"
         return request
