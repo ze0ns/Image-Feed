@@ -9,10 +9,15 @@ import Foundation
 final class OAuth2Service {
     // MARK: Static Properties
     static let shared = OAuth2Service()
+    
     // MARK: Private Properties
     private var networkClient = NetworkClient()
-    private var storageToken = OAuth2TokenStorage()
-    private init() {}
+    private var storageToken = OAuth2TokenStorage.shared
+    private let decoder: JSONDecoder
+    
+    private init() {
+        decoder = JSONDecoder()
+    }
     // MARK: - Public Methods
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
         guard let request = makeOAuthTokenRequest(code: code) else { return  }
@@ -20,15 +25,16 @@ final class OAuth2Service {
             switch result {
             case .success(let data):
                 do {
-                    let decoder = JSONDecoder()
-                    let  tokenBody = try decoder.decode(OAuthTokenResponseBody.self, from: data)
+                    let tokenBody = try self.decoder.decode(OAuthTokenResponseBody.self, from: data)
                     self.storageToken.set(token: tokenBody.accessToken)
                     completion(.success(tokenBody.accessToken))
                 } catch {
+                    print("dataTask: Network error ")
                     print(error)
                     completion(.failure(error))
                 }
             case .failure(let error):
+                print("dataTask: Network error ")
                 print(error)
                 completion(.failure(error))
             }
@@ -37,6 +43,7 @@ final class OAuth2Service {
     // MARK: - Private Methods
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
+            print("❌ Не удалось создать URLComponents")
             return nil
         }
         urlComponents.queryItems = [
@@ -46,11 +53,15 @@ final class OAuth2Service {
             URLQueryItem(name: "code", value: code),
             URLQueryItem(name: "grant_type", value: "authorization_code"),
         ]
+        print("QueryItems установлены: \(urlComponents.queryItems?.count ?? 0) параметров")
         guard let authTokenUrl = urlComponents.url else {
+            print("❌ Не удалось создать URL из компонентов")
+            print("Компоненты: scheme=\(urlComponents.scheme ?? "nil"), host=\(urlComponents.host ?? "nil")")
             return nil
         }
         var request = URLRequest(url: authTokenUrl)
-        request.httpMethod = "POST"
+        request.httpMethod = HTTPMethod.post.rawValue
+        print("Запрос создан: method=\(request.httpMethod ?? "nil")")
         return request
     }
     

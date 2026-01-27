@@ -3,8 +3,8 @@ import UIKit
 import WebKit
 
 protocol WebViewViewControllerDelegate: AnyObject {
-    func  webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
-    func  webViewViewControllerDidCancel(_ vc: WebViewViewController)
+    func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String)
+    func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
 
 final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUIDelegate {
@@ -20,7 +20,7 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
     }
     private let loginURL: URL? = URL(string: WebViewConstants.unsplashAuthorizeURLString)
-   
+    
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,13 +80,13 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
     
     private func loadAuthView (){
         guard WebViewConstants.unsplashAuthorizeURLString != nil else {
-                   let error = NSError(domain: "Auth", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Отсутствует строка URL авторизации"])
-                   print("Ошибка URL: \(error.localizedDescription)")
-                   return
+            let error = NSError(domain: "Auth", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Отсутствует строка URL авторизации"])
+            print("Ошибка URL: \(error.localizedDescription)")
+            return
         }
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
             let error = NSError(domain: "Auth", code: 1002, userInfo: [NSLocalizedDescriptionKey: "Не удалось создать URLComponents из строки: \(WebViewConstants.unsplashAuthorizeURLString)"])
-                print("Ошибка URLComponents: \(error.localizedDescription)")
+            print("Ошибка URLComponents: \(error.localizedDescription)")
             return
         }
         urlComponents.queryItems = [

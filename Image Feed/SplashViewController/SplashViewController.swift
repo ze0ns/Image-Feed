@@ -7,10 +7,10 @@
 
 import UIKit
 final class SplashViewController: UIViewController {
-
+    
     // MARK: - Private Properties
-    private let storage = OAuth2TokenStorage()
-    private let imageView: UIImageView = {
+    private let storage = OAuth2TokenStorage.shared
+    private  let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(resource: .splashScreenLogo)
@@ -73,13 +73,13 @@ final class SplashViewController: UIViewController {
     private func performTransition(to viewController: UIViewController) {
         replaceRootViewController(with: viewController)
     }
-
+    
     private func replaceRootViewController(with viewController: UIViewController) {
         guard let window = UIApplication.shared.windows.first else {
             assertionFailure("Invalid window configuration")
             return
         }
-
+        
         UIView.transition(with: window, duration: 0.3, options: .transitionCrossDissolve) {
             window.rootViewController = viewController
             window.makeKeyAndVisible()

@@ -9,6 +9,9 @@
 import Foundation
 
 final class OAuth2TokenStorage {
+    // MARK: Private Properties
+    static let shared = OAuth2TokenStorage()
+    private init() {}
     // MARK: - Private Properties
     private var token: String? {
         get {
@@ -24,6 +27,6 @@ final class OAuth2TokenStorage {
         self.token = token
     }
     func get() -> String? {
-        return token
+        token
     }
 }

@@ -16,16 +16,15 @@ final class AuthViewController: UIViewController {
     
     // MARK: - UI Elements
     
-    private let imageView: UIImageView = {
+    private lazy var imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.image = UIImage(resource: .logoOfUnsplash)
-        imageView.tintColor = .systemBlue
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
-    private let loginButton: UIButton = {
+    private lazy var loginButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("Войти", for: .normal)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 17)
@@ -42,7 +41,7 @@ final class AuthViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupActions()
-
+        
     }
     
     // MARK: - Setup Methods
@@ -55,7 +54,7 @@ final class AuthViewController: UIViewController {
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-
+            
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             imageView.widthAnchor.constraint(equalToConstant: 60),
@@ -89,11 +88,11 @@ final class AuthViewController: UIViewController {
         present(navController, animated: true)
     }
     // MARK: - Alerts
-      private func showErrorAlert(_ message: String) {
-          let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-          alert.addAction(UIAlertAction(title: "ОК", style: .default))
-          present(alert, animated: true)
-      }
+    private func showErrorAlert(_ message: String) {
+        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "ОК", style: .default))
+        present(alert, animated: true)
+    }
 }
 
 // MARK: Extensions
@@ -101,7 +100,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
         fetchOAuthToken(code) { [weak self] result in
-            guard let self = self else { return }
+            guard let self else { return }
             switch result {
             case .success:
                 self.delegate?.didAuthenticate(self)
@@ -114,7 +113,7 @@ extension AuthViewController: WebViewViewControllerDelegate {
             }
         }
     }
-
+    
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         vc.dismiss(animated: true)
     }
