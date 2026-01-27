@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import ProgressHUD
+
 protocol AuthViewControllerDelegate: AnyObject {
     func didAuthenticate(_ vc: AuthViewController)
 }
@@ -41,7 +43,6 @@ final class AuthViewController: UIViewController {
         setupUI()
         setupConstraints()
         setupActions()
-        
     }
     
     // MARK: - Setup Methods
@@ -99,12 +100,14 @@ final class AuthViewController: UIViewController {
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         vc.dismiss(animated: true)
+        UIBlockingProgressHUD.show()
         fetchOAuthToken(code) { [weak self] result in
             guard let self else { return }
             switch result {
             case .success:
                 self.delegate?.didAuthenticate(self)
                 DispatchQueue.main.async{
+                    UIBlockingProgressHUD.dismiss()
                     self.goToMainTabBarController()
                 }
             case .failure:

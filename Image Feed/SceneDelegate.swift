@@ -10,6 +10,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         window?.rootViewController = SplashViewController()
+      //  window?.rootViewController = AuthViewController()
         window?.makeKeyAndVisible()
     }
 

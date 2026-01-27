@@ -6,6 +6,10 @@
 //
 
 import Foundation
+enum AuthServiceError: Error {
+    case invalidRequest
+    case invalidToken
+}
 final class OAuth2Service {
     // MARK: Static Properties
     static let shared = OAuth2Service()
@@ -14,27 +18,41 @@ final class OAuth2Service {
     private var networkClient = NetworkClient()
     private var storageToken = OAuth2TokenStorage.shared
     private let decoder: JSONDecoder
-    
     private init() {
         decoder = JSONDecoder()
     }
+    // MARK: - Private Properties
+    private let tokenQueue = DispatchQueue(label: "com.app.tokenQueue", qos: .userInitiated, attributes: .concurrent)
+    
     // MARK: - Public Methods
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard let request = makeOAuthTokenRequest(code: code) else { return  }
-        networkClient.fetch(request: request) { result in
+        guard let request = makeOAuthTokenRequest(code: code) else {
+            completion(.failure(AuthServiceError.invalidRequest))
+            return
+        }
+        
+        networkClient.fetch(request: request) { [weak self] result in
             switch result {
             case .success(let data):
-                do {
-                    let tokenBody = try self.decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    self.storageToken.set(token: tokenBody.accessToken)
-                    completion(.success(tokenBody.accessToken))
-                } catch {
-                    print("dataTask: Network error ")
-                    print(error)
-                    completion(.failure(error))
+                self?.tokenQueue.async(flags: .barrier) {
+                    do {
+                        let tokenBody = try self?.decoder.decode(OAuthTokenResponseBody.self, from: data)
+                        guard let token = tokenBody?.accessToken else {
+                            completion(.failure(AuthServiceError.invalidToken))
+                            return
+                        }
+                        
+                        self?.storageToken.set(token: token)
+                        completion(.success(token))
+                    } catch {
+                        print("dataTask: Decoding error")
+                        print(error)
+                        completion(.failure(error))
+                    }
                 }
+                
             case .failure(let error):
-                print("dataTask: Network error ")
+                print("dataTask: Network error")
                 print(error)
                 completion(.failure(error))
             }

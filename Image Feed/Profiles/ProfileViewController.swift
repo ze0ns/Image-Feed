@@ -13,6 +13,8 @@ class ProfileViewController: UIViewController {
     private lazy var userFIO = UILabel()
     private lazy var loginName = UILabel()
     private lazy var comments = UILabel()
+    private lazy var storege = OAuth2TokenStorage.shared
+    private var profileService = ProfileService()
     
     private lazy var avatar: UIImageView = {
         var avatar = UIImageView()
@@ -28,14 +30,29 @@ class ProfileViewController: UIViewController {
         exit.setImage(UIImage(resource: .logoutButton), for: .normal)
         return exit
     }()
-    
-    
+
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlack
+        fetchProfile()
         setupViews()
         setupConstraints()
+    }
+    // MARK: - Private Methods, Fetch Data
+    private func fetchProfile(){
+        guard let token = storege.get() else { return  }
+        profileService.fetchProfile(token) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let profile):
+                self.userFIO.text = profile.name.isEmpty ? "Имя не задано": profile.name
+                self.comments.text = profile.bio ?? "Профиль не заполнен"
+                self.loginName.text = profile.username.isEmpty ? "Имя не задано" : "@\(String(describing: profile.username))"
+            case .failure(let error):
+                print("Ошибка: \(error.localizedDescription)")
+            }
+        }
     }
     // MARK: - Private Methods, configure UI
     private func setupViews(){
