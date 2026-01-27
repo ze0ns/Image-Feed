@@ -14,41 +14,81 @@ final class MainTabBarController: UITabBarController {
         setupCustomTabBar()
         makeUI()
     }
-    
     private func setupCustomTabBar() {
         tabBar.isHidden = true
-        let tabItems = [
-            UITabBarItem(title: "", image: UIImage(resource: .activeLenta), tag: 0),
-            UITabBarItem(title: "", image: UIImage(resource: .activeProfile), tag: 1)
-        ]
-        guard var customTabBar = customTabBar else { return }
-        customTabBar = CustomTabBar(items: tabItems)
-        customTabBar.backgroundColor = .ypBlack
-        customTabBar.height = customTabBarHeight
-        customTabBar.translatesAutoresizingMaskIntoConstraints = false
-        
-        customTabBar.onItemSelected = { [weak self] index in
-            self?.selectedIndex = index  // Переключаем вкладку
+        let tabItems = createTabItems()
+        let tabBar = CustomTabBar(items: tabItems)
+        tabBar.backgroundColor = .ypBlack
+        tabBar.height = customTabBarHeight
+        tabBar.translatesAutoresizingMaskIntoConstraints = false
+        tabBar.onItemSelected = { [weak self] index in
+            self?.selectedIndex = index
         }
         
-        view.addSubview(customTabBar)
+        view.addSubview(tabBar)
         
         NSLayoutConstraint.activate([
-            customTabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            customTabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            customTabBar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            customTabBar.heightAnchor.constraint(equalToConstant: customTabBarHeight)
+            tabBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tabBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tabBar.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tabBar.heightAnchor.constraint(equalToConstant: customTabBarHeight)
         ])
     }
+    private func createTabItems() -> [UITabBarItem] {
+            let items = [
+                createTabBarItem(title: "", imageResource: .activeLenta, tag: 0),
+                createTabBarItem(title: "", imageResource: .activeProfile, tag: 1)
+            ]
+            return items.compactMap { $0 }
+        }
+    private func createTabBarItem(title: String,
+                                    imageResource: ImageResource,
+                                    tag: Int) -> UITabBarItem? {
+           let image: UIImage
+           do {
+               image = try UIImage(resource: imageResource)
+           } catch {
+               print("⚠️ Не удалось загрузить изображение: \(error)")
+               if let fallbackImage = UIImage(systemName: tag == 0 ? "photo.fill" : "person.fill") {
+                   image = fallbackImage
+               } else {
+                   let size = CGSize(width: 24, height: 24)
+                   let renderer = UIGraphicsImageRenderer(size: size)
+                   image = renderer.image { context in
+                       UIColor.gray.setFill()
+                       context.fill(CGRect(origin: .zero, size: size))
+                   }
+               }
+           }
+           
+           return UITabBarItem(title: title, image: image, tag: tag)
+       }
     private func makeUI() {
         let firstVC = ImagesListViewController()
         let secondVC = ProfileViewController()
         viewControllers = [firstVC, secondVC]
     }
+}
+
+// MARK: - UITabBarControllerDelegate
+extension MainTabBarController: UITabBarControllerDelegate {
+    internal func tabBarController(_ tabBarController: UITabBarController,
+                         didSelect viewController: UIViewController) {
+        customTabBar?.selectedIndex = tabBarController.selectedIndex
+    }
+}
+
+// MARK: - UIView Lifecycle
+extension MainTabBarController {
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateTabBarSafeArea()
+    }
     
-    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {
-        guard let index = viewControllers?.firstIndex(of: viewController) else { return }
-        guard let customTabBar = customTabBar else { return }
-        customTabBar.selectedIndex = index
+    private func updateTabBarSafeArea() {
+        guard let tabBar = customTabBar else { return }
+        if view.safeAreaInsets.bottom > 0 {
+            tabBar.height = customTabBarHeight + view.safeAreaInsets.bottom
+        }
     }
 }
