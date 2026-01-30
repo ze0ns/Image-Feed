@@ -21,6 +21,14 @@ final class OAuth2Service {
     private init() {
         decoder = JSONDecoder()
     }
+    private(set) var authToken: String? {
+        get {
+            return storageToken.token
+        }
+        set {
+            storageToken.token = newValue
+        }
+    }
     // MARK: - Private Properties
     private let tokenQueue = DispatchQueue(label: "com.app.tokenQueue", qos: .userInitiated, attributes: .concurrent)
     
@@ -41,8 +49,7 @@ final class OAuth2Service {
                             completion(.failure(AuthServiceError.invalidToken))
                             return
                         }
-                        
-                        self?.storageToken.set(token: token)
+                        self?.authToken = token
                         completion(.success(token))
                     } catch {
                         print("dataTask: Decoding error")

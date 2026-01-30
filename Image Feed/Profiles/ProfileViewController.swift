@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ProfileViewController: UIViewController {
     
@@ -13,14 +14,11 @@ class ProfileViewController: UIViewController {
     private lazy var userFIO = UILabel()
     private lazy var loginName = UILabel()
     private lazy var comments = UILabel()
-    private lazy var storege = OAuth2TokenStorage.shared
-    private var profileService = ProfileService()
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     private lazy var avatar: UIImageView = {
         var avatar = UIImageView()
         avatar.contentMode = .scaleAspectFit
-        avatar.clipsToBounds = true
-        avatar.layer.cornerRadius = 16
         avatar = UIImageView(image: UIImage(resource: .avatar))
         return avatar
     }()
@@ -30,41 +28,89 @@ class ProfileViewController: UIViewController {
         exit.setImage(UIImage(resource: .logoutButton), for: .normal)
         return exit
     }()
-
+    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlack
-        fetchProfile()
+        if let profile = ProfileService.shared.profile {
+            updateProfileDetails(profile: profile)
+        }
+        userFIO.text = "Екатерина Новикова"
+        loginName.text = "@ekaterina_nov"
+        comments.text = "Hello, world!"
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
         setupViews()
         setupConstraints()
     }
-    // MARK: - Private Methods, Fetch Data
-    private func fetchProfile(){
-        guard let token = storege.get() else { return  }
-        profileService.fetchProfile(token) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let profile):
-                self.userFIO.text = profile.name.isEmpty ? "Имя не задано": profile.name
-                self.comments.text = profile.bio ?? "Профиль не заполнен"
-                self.loginName.text = profile.username.isEmpty ? "Имя не задано" : "@\(String(describing: profile.username))"
-            case .failure(let error):
-                print("Ошибка: \(error.localizedDescription)")
+    private func updateAvatar() {
+        guard let imageUrl = URL(string: ProfileImageService.shared.userImage) else { return }
+        print("imageUrl: \(imageUrl)")
+        let placeholderImage = UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+        let processor = RoundCornerImageProcessor(cornerRadius: 35) // Радиус для круга
+        avatar.kf.indicatorType = .activity
+        avatar.kf.setImage(
+            with: imageUrl,
+            placeholder: placeholderImage,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale), // Учитываем масштаб экрана
+                .cacheOriginalImage, // Кэшируем оригинал
+                .forceRefresh // Игнорируем кэш, чтобы обновить
+            ]) { result in
+
+                switch result {
+                    // Успешная загрузка
+                case .success(let value):
+                    // Картинка
+                    print(value.image)
+
+                    // Откуда картинка загружена:
+                    // - .none — из сети.
+                    // - .memory — из кэша оперативной памяти.
+                    // - .disk — из дискового кэша.
+                    print(value.cacheType)
+
+                    // Информация об источнике.
+                    print(value.source)
+
+                    // В случае ошибки
+                case .failure(let error):
+                    print(error)
+                }
             }
+    }
+    //MARK: - Private Methods, Load Data
+    private func updateProfileDetails(profile: Profile) {
+        print("Заполняем профиль")
+        DispatchQueue.main.async {
+            self.userFIO.text = profile.name ?? "Имя не указано"
+            self.loginName.text = profile.loginName
+            self.comments.text = profile.bio ?? "Нет описания"
+       //     self.upadeAvatar(urlImage: ProfileImageService.shared.userImage)
         }
     }
+
+    
     // MARK: - Private Methods, configure UI
     private func setupViews(){
-        userFIO.text = "Екатерина Новикова"
         userFIO.textColor = .ypWhite
         userFIO.font = .boldSystemFont(ofSize: 23)
         
-        loginName.text = "@ekaterina_nov"
         loginName.textColor = .ypGray
         loginName.font = .systemFont(ofSize: 13)
         
-        comments.text = "Hello, world!"
         comments.textColor = .ypWhite
         comments.font = .systemFont(ofSize: 13)
         
@@ -88,6 +134,8 @@ class ProfileViewController: UIViewController {
             avatar.heightAnchor.constraint(equalToConstant: 70),
             avatar.widthAnchor.constraint(equalToConstant: 70)
         ])
+        self.avatar.layer.cornerRadius = self.avatar.frame.height / 2
+        self.avatar.clipsToBounds = true
         
         NSLayoutConstraint.activate([
             exit.topAnchor.constraint(equalTo: view.topAnchor, constant: 89),
