@@ -15,6 +15,7 @@ protocol AuthViewControllerDelegate: AnyObject {
 final class AuthViewController: UIViewController {
     private let oauth2Service = OAuth2Service.shared
     weak var delegate: AuthViewControllerDelegate?
+    private var activeTask: URLSessionTask?
     
     // MARK: - UI Elements
     
@@ -44,7 +45,20 @@ final class AuthViewController: UIViewController {
         setupConstraints()
         setupActions()
     }
+    override func viewWillDisappear(_ animated: Bool) {
+         super.viewWillDisappear(animated)
+         cancelActiveRequest()
+     }
+     
+     deinit {
+         cancelActiveRequest()
+     }
+    // MARK: - Request Management
     
+    private func cancelActiveRequest() {
+        activeTask?.cancel()
+        activeTask = nil
+    }
     // MARK: - Setup Methods
     
     private func setupUI() {
@@ -83,48 +97,56 @@ final class AuthViewController: UIViewController {
         present(navController, animated: true)
     }
     private func goToMainTabBarController() {
-        let nextVC = MainTabBarController()
+        let nextVC = SplashViewController()
         let navController = UINavigationController(rootViewController: nextVC)
         navController.modalPresentationStyle = .fullScreen
         present(navController, animated: true)
     }
     // MARK: - Alerts
-    private func showErrorAlert(_ message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ОК", style: .default))
-        present(alert, animated: true)
+    func showAuthErrorAlert() {
+        DispatchQueue.main.async {
+            let alertController = UIAlertController(
+                title: "Что-то пошло не так",
+                message: "Не удалось войти в систему",
+                preferredStyle: .alert
+            )
+            let okAction = UIAlertAction(title: "Ок", style: .default, handler: nil)
+            alertController.addAction(okAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
     }
 }
 
 // MARK: Extensions
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-        vc.dismiss(animated: true)
-        UIBlockingProgressHUD.show()
-        fetchOAuthToken(code) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case .success:
-                self.delegate?.didAuthenticate(self)
-                DispatchQueue.main.async{
-                    UIBlockingProgressHUD.dismiss()
-                    self.goToMainTabBarController()
-                }
-            case .failure:
-                showErrorAlert("error")
-                break
-            }
-        }
-    }
-    
-    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-        vc.dismiss(animated: true)
-    }
+           vc.dismiss(animated: true)
+           cancelActiveRequest()
+           UIBlockingProgressHUD.show()
+           activeTask = oauth2Service.fetchOAuthToken(code) { [weak self] result in
+               guard let self = self else { return }
+               DispatchQueue.main.async {
+                   UIBlockingProgressHUD.dismiss()
+                   self.activeTask = nil
+                   switch result {
+                   case .success:
+                       self.delegate?.didAuthenticate(self)
+                       self.goToMainTabBarController()
+                   case .failure(let error):
+
+                       let nsError = error as NSError
+                       if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                           print("Запрос был отменен")
+                           return
+                       }
+                       self.showAuthErrorAlert()
+                   }
+               }
+           }
+       }
+       
+       func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+           vc.dismiss(animated: true)
+       }
 }
-extension AuthViewController {
-    private func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        oauth2Service.fetchOAuthToken(code) { result in
-            completion(result)
-        }
-    }
-}
+

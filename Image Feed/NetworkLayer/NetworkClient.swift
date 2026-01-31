@@ -9,7 +9,7 @@
 import Foundation
 
 protocol NetworkRouting {
-    func fetch(request: URLRequest, handler: @escaping (Result<Data, Error>) -> Void)
+    func fetch(request: URLRequest, handler: @escaping (Result<Data, Error>) -> Void)  -> URLSessionTask
 }
 
 final class NetworkClient: NetworkRouting {
@@ -18,8 +18,8 @@ final class NetworkClient: NetworkRouting {
         case codeError
     }
     // MARK: - Public Methods
-    func fetch(request: URLRequest, handler: @escaping (Result<Data, Error>) -> Void) {
-        
+    func fetch(request: URLRequest, handler: @escaping (Result<Data, Error>) -> Void)
+    -> URLSessionTask {
         let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 print("Netwoork client: \(error)")
@@ -38,5 +38,6 @@ final class NetworkClient: NetworkRouting {
         }
         
         task.resume()
+        return task
     }
 }
