@@ -14,7 +14,7 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
     private let progressView = UIProgressView()
     weak var delegate: WebViewViewControllerDelegate?
     private var authVC = AuthViewController()
-    
+    private var estimatedProgressObservation: NSKeyValueObservation?
     // MARK: - Constants
     enum WebViewConstants {
         static let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
@@ -32,22 +32,17 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        guard let webView = webView else {
-            print("WKWebView не инициализирован")
-            return
-        }
-        webView.addObserver(
-            self,
-            forKeyPath: #keyPath(WKWebView.estimatedProgress),
-            options: .new,
-            context: nil)
+        guard let webView = webView else { return }
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options: [],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.updateProgress()
+             })
         updateProgress()
     }
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        guard let webView = webView else { return }
-        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
-    }
+    
     // MARK: - Setup Navigation Bar
     private func setupNavigationBar() {
         navigationController?.navigationBar.prefersLargeTitles = false
@@ -68,25 +63,17 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
         navController.setViewControllers([sourceVC], animated: true)
     }
     
-    // MARK: - Observe Changes
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == #keyPath(WKWebView.estimatedProgress) {
-            updateProgress()
-        } else {
-            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-        }
-    }
     // MARK: - Private Method
     
     private func loadAuthView (){
         guard WebViewConstants.unsplashAuthorizeURLString != nil else {
-            let error = NSError(domain: "Auth", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Отсутствует строка URL авторизации"])
-            print("Ошибка URL: \(error.localizedDescription)")
+            let error = NSError(domain: "Auth", code: 1001, userInfo: [NSLocalizedDescriptionKey: "[WebViewViewController] - Метод loadAuthView, Отсутствует строка URL авторизации"])
+            print("WebViewViewController] - Метод loadAuthView, Ошибка URL: \(error.localizedDescription)")
             return
         }
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            let error = NSError(domain: "Auth", code: 1002, userInfo: [NSLocalizedDescriptionKey: "Не удалось создать URLComponents из строки: \(WebViewConstants.unsplashAuthorizeURLString)"])
-            print("Ошибка URLComponents: \(error.localizedDescription)")
+            let error = NSError(domain: "Auth", code: 1002, userInfo: [NSLocalizedDescriptionKey: "[WebViewViewController] Не удалось создать URLComponents из строки: \(WebViewConstants.unsplashAuthorizeURLString)"])
+            print("[WebViewViewController] Ошибка URLComponents: \(error.localizedDescription)")
             return
         }
         urlComponents.queryItems = [
@@ -97,8 +84,8 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
         ]
         
         guard let url = urlComponents.url else {
-            let error = NSError(domain: "Auth", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Не удалось сформировать URL из URLComponents: \(urlComponents)"])
-            print("Ошибка формирования URL: \(error.localizedDescription)")
+            let error = NSError(domain: "Auth", code: 1003, userInfo: [NSLocalizedDescriptionKey: " [WebViewViewController] Не удалось сформировать URL из URLComponents: \(urlComponents)"])
+            print("[WebViewViewController] Ошибка формирования URL: \(error.localizedDescription)")
             return
         }
         guard let webView = webView else { return }
@@ -172,13 +159,6 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
         } else {
             return nil
         }
-    }
-    
-    // MARK: - UIAlertController
-    private func showErrorAlert(_ message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ОК", style: .default))
-        present(alert, animated: true)
     }
     
     // MARK: - Go to main screen

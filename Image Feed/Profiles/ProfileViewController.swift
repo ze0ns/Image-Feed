@@ -6,19 +6,19 @@
 //
 
 import UIKit
+import Kingfisher
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
     private lazy var userFIO = UILabel()
     private lazy var loginName = UILabel()
     private lazy var comments = UILabel()
+    private var profileImageServiceObserver: NSObjectProtocol?
     
     private lazy var avatar: UIImageView = {
         var avatar = UIImageView()
         avatar.contentMode = .scaleAspectFit
-        avatar.clipsToBounds = true
-        avatar.layer.cornerRadius = 16
         avatar = UIImageView(image: UIImage(resource: .avatar))
         return avatar
     }()
@@ -29,25 +29,77 @@ class ProfileViewController: UIViewController {
         return exit
     }()
     
-    
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .ypBlack
+        if let profile = ProfileService.shared.profile {
+            updateProfileDetails(profile: profile)
+        }
+        userFIO.text = "Екатерина Новикова"
+        loginName.text = "@ekaterina_nov"
+        comments.text = "Hello, world!"
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                guard let self = self else { return }
+                self.updateAvatar()
+            }
+        updateAvatar()
         setupViews()
         setupConstraints()
     }
+    private func updateAvatar() {
+        guard let imageUrl = URL(string: ProfileImageService.shared.userImage) else { return }
+        print("imageUrl: \(imageUrl)")
+        let placeholderImage = UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        avatar.kf.indicatorType = .activity
+        avatar.kf.setImage(
+            with: imageUrl,
+            placeholder: placeholderImage,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .forceRefresh
+            ]) { result in
+                switch result {
+                case .success(let value):
+                    // Картинка
+                    print(value.image)
+                    print(value.cacheType)
+                    print(value.source)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+    //MARK: - Private Methods, Load Data
+    private func updateProfileDetails(profile: Profile) {
+        print("Заполняем профиль")
+        DispatchQueue.main.async {
+            self.userFIO.text = profile.name
+            self.loginName.text = profile.loginName
+            self.comments.text = profile.bio ?? "Нет описания"
+       //     self.upadeAvatar(urlImage: ProfileImageService.shared.userImage)
+        }
+    }
+
+    
     // MARK: - Private Methods, configure UI
     private func setupViews(){
-        userFIO.text = "Екатерина Новикова"
         userFIO.textColor = .ypWhite
         userFIO.font = .boldSystemFont(ofSize: 23)
         
-        loginName.text = "@ekaterina_nov"
         loginName.textColor = .ypGray
         loginName.font = .systemFont(ofSize: 13)
         
-        comments.text = "Hello, world!"
         comments.textColor = .ypWhite
         comments.font = .systemFont(ofSize: 13)
         
@@ -71,6 +123,8 @@ class ProfileViewController: UIViewController {
             avatar.heightAnchor.constraint(equalToConstant: 70),
             avatar.widthAnchor.constraint(equalToConstant: 70)
         ])
+        self.avatar.layer.cornerRadius = self.avatar.frame.height / 2
+        self.avatar.clipsToBounds = true
         
         NSLayoutConstraint.activate([
             exit.topAnchor.constraint(equalTo: view.topAnchor, constant: 89),
@@ -102,26 +156,10 @@ class ProfileViewController: UIViewController {
         comments.text = commentsGet
     }
 }
-
-//MARK: - SwiftUI
+//MARK: SwiftUI - for working canvas
 import SwiftUI
-struct ProfileVCProvider: PreviewProvider{
-    
-    static var previews: some View{
-        ContainerView().edgesIgnoringSafeArea(.all)
+struct ProfileViewControllerProvider: PreviewProvider {
+    static var previews: some View {
+        VCProvider<ProfileViewController>.previews
     }
-    
-    struct ContainerView: UIViewControllerRepresentable {
-        
-        let tabBarVC = ProfileViewController()
-        
-        func makeUIViewController(context: UIViewControllerRepresentableContext<ProfileVCProvider.ContainerView>) ->
-        ProfileViewController{
-            return tabBarVC
-        }
-        func updateUIViewController(_ uiViewController: ProfileVCProvider.ContainerView.UIViewControllerType, context: UIViewControllerRepresentableContext<ProfileVCProvider.ContainerView>) {
-            
-        }
-    }
-    
 }

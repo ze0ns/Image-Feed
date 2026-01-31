@@ -7,9 +7,9 @@
 
 import UIKit
 final class SplashViewController: UIViewController {
-    
     // MARK: - Private Properties
-    private let storage = OAuth2TokenStorage.shared
+    private let storageToken = OAuth2TokenStorage.shared
+    private lazy var username: String = " "
     private  let imageView: UIImageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
@@ -17,9 +17,19 @@ final class SplashViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
+    private(set) var authToken: String? {
+        get {
+            return storageToken.token
+        }
+        set {
+            storageToken.token = newValue
+        }
+    }
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        var token = authToken
+        print(authToken)
         setupUI()
         setupConstraints()
     }
@@ -44,21 +54,44 @@ final class SplashViewController: UIViewController {
     }
     
     private func checkAuthStatus() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-            guard let self = self else { return }
-            
-            let token = self.storage.get()
-            print("Токен: \(token ?? "отсутствует")")
-            
-            if token != nil && !(token?.isEmpty ?? true) {
+        DispatchQueue.main.async { 
+            if  let token = self.authToken {
                 print("Идем в галерею")
-                self.goToMainTabController()
+                self.fetchProfile(token)
             } else {
                 print("Идем в авторизацию")
                 self.goToAuthViewController()
             }
         }
     }
+    
+    // MARK: - Private Methods, Fetch Data
+    private func fetchProfile(_ token: String){
+        UIBlockingProgressHUD.show()
+        ProfileService.shared.fetchProfile(token) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            guard let self = self else { return }
+            switch result {
+            case .success(let result):
+                self.username = result.username
+                self.fetchImage()
+                self.goToMainTabController()
+            case .failure(let error):
+                print("[SplashViewController], Ошибка в методе полученя профиля: \(error.localizedDescription)")
+            }
+        }
+    }
+    private func fetchImage(){
+        ProfileImageService.shared.fetchProfileImageURL(username: self.username){ result in
+            switch result {
+            case .success(let result):
+               print(result)
+            case .failure(let error):
+                print("SplashViewController], Ошибка в методе полученя аватарки: \(error.localizedDescription)")
+            }
+        }
+    }
+
     // MARK: - Go To ViewControllers
     private func goToMainTabController() {
         let tabBarController = MainTabBarController()
@@ -76,7 +109,7 @@ final class SplashViewController: UIViewController {
     
     private func replaceRootViewController(with viewController: UIViewController) {
         guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid window configuration")
+            assertionFailure("SplashViewController] Неправильная конфигурация окна")
             return
         }
         
@@ -84,5 +117,12 @@ final class SplashViewController: UIViewController {
             window.rootViewController = viewController
             window.makeKeyAndVisible()
         }
+    }
+}
+//MARK: SwiftUI - for working canvas
+import SwiftUI
+struct SplashViewControllerProvider: PreviewProvider {
+    static var previews: some View {
+        VCProvider<SplashViewController>.previews
     }
 }
