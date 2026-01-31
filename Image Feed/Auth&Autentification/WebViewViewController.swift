@@ -67,13 +67,13 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
     
     private func loadAuthView (){
         guard WebViewConstants.unsplashAuthorizeURLString != nil else {
-            let error = NSError(domain: "Auth", code: 1001, userInfo: [NSLocalizedDescriptionKey: "Отсутствует строка URL авторизации"])
-            print("Ошибка URL: \(error.localizedDescription)")
+            let error = NSError(domain: "Auth", code: 1001, userInfo: [NSLocalizedDescriptionKey: "[WebViewViewController] - Метод loadAuthView, Отсутствует строка URL авторизации"])
+            print("WebViewViewController] - Метод loadAuthView, Ошибка URL: \(error.localizedDescription)")
             return
         }
         guard var urlComponents = URLComponents(string: WebViewConstants.unsplashAuthorizeURLString) else {
-            let error = NSError(domain: "Auth", code: 1002, userInfo: [NSLocalizedDescriptionKey: "Не удалось создать URLComponents из строки: \(WebViewConstants.unsplashAuthorizeURLString)"])
-            print("Ошибка URLComponents: \(error.localizedDescription)")
+            let error = NSError(domain: "Auth", code: 1002, userInfo: [NSLocalizedDescriptionKey: "[WebViewViewController] Не удалось создать URLComponents из строки: \(WebViewConstants.unsplashAuthorizeURLString)"])
+            print("[WebViewViewController] Ошибка URLComponents: \(error.localizedDescription)")
             return
         }
         urlComponents.queryItems = [
@@ -84,8 +84,8 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
         ]
         
         guard let url = urlComponents.url else {
-            let error = NSError(domain: "Auth", code: 1003, userInfo: [NSLocalizedDescriptionKey: "Не удалось сформировать URL из URLComponents: \(urlComponents)"])
-            print("Ошибка формирования URL: \(error.localizedDescription)")
+            let error = NSError(domain: "Auth", code: 1003, userInfo: [NSLocalizedDescriptionKey: " [WebViewViewController] Не удалось сформировать URL из URLComponents: \(urlComponents)"])
+            print("[WebViewViewController] Ошибка формирования URL: \(error.localizedDescription)")
             return
         }
         guard let webView = webView else { return }
@@ -159,13 +159,6 @@ final class WebViewViewController: UIViewController, WKNavigationDelegate, WKUID
         } else {
             return nil
         }
-    }
-    
-    // MARK: - UIAlertController
-    private func showErrorAlert(_ message: String) {
-        let alert = UIAlertController(title: "Ошибка", message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "ОК", style: .default))
-        present(alert, animated: true)
     }
     
     // MARK: - Go to main screen

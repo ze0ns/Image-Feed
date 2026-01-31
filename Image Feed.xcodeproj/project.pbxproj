@@ -10,6 +10,7 @@
 		0604D35A2F18F15A005C4A8C /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604D3592F18F15A005C4A8C /* ImagesListViewController.swift */; };
 		0675B7B62F2B2908005195E9 /* ProfileImageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0675B7B52F2B2908005195E9 /* ProfileImageService.swift */; };
 		0675B7B82F2B29CA005195E9 /* UserResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0675B7B72F2B29CA005195E9 /* UserResult.swift */; };
+		067F1C0D2F2DF34D00882CB9 /* VCProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067F1C0C2F2DF34D00882CB9 /* VCProvider.swift */; };
 		0683506E2F19F90200DF7E6D /* ImageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0683506D2F19F90200DF7E6D /* ImageCell.swift */; };
 		068350702F19F98C00DF7E6D /* ImageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */; };
 		068350732F1A051A00DF7E6D /* ImagesViewMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350722F1A051A00DF7E6D /* ImagesViewMock.swift */; };
@@ -48,6 +49,7 @@
 		0604D3592F18F15A005C4A8C /* ImagesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewController.swift; sourceTree = "<group>"; };
 		0675B7B52F2B2908005195E9 /* ProfileImageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileImageService.swift; sourceTree = "<group>"; };
 		0675B7B72F2B29CA005195E9 /* UserResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserResult.swift; sourceTree = "<group>"; };
+		067F1C0C2F2DF34D00882CB9 /* VCProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VCProvider.swift; sourceTree = "<group>"; };
 		0683506D2F19F90200DF7E6D /* ImageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageCell.swift; sourceTree = "<group>"; };
 		0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewCell.swift; sourceTree = "<group>"; };
 		068350722F1A051A00DF7E6D /* ImagesViewMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewMock.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 		0683507F2F1A216B00DF7E6D /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				067F1C0C2F2DF34D00882CB9 /* VCProvider.swift */,
 				0689861B2F28D0A400E1BDA3 /* UIBlockingProgressHUD.swift */,
 				068986132F287D9A00E1BDA3 /* HTTPMethod.swift */,
 				068350802F1A217800DF7E6D /* UIColor+Extensions.swift */,
@@ -322,6 +325,7 @@
 				068350702F19F98C00DF7E6D /* ImageViewCell.swift in Sources */,
 				0694B3C12F1E709E000EF4F0 /* MainTabBarController.swift in Sources */,
 				068350812F1A217800DF7E6D /* UIColor+Extensions.swift in Sources */,
+				067F1C0D2F2DF34D00882CB9 /* VCProvider.swift in Sources */,
 				7D9CFA4328DDEE7F00D971A7 /* AppDelegate.swift in Sources */,
 				068986142F287D9A00E1BDA3 /* HTTPMethod.swift in Sources */,
 				0604D35A2F18F15A005C4A8C /* ImagesListViewController.swift in Sources */,

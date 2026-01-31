@@ -15,7 +15,7 @@ final class ProfileService {
     // MARK: - Singleton
     static let shared = ProfileService()
     
-    // MARK: - Properties
+    // MARK: - Private Properties
     private var networkClient = NetworkClient()
     private let decoder: JSONDecoder
     private(set) var profile: Profile?
@@ -70,14 +70,14 @@ final class ProfileService {
                     }
                     
                 } catch {
-                    print("❌ Ошибка декодирования: \(error)")
+                    print("❌ [ProfileService] Ошибка декодирования: \(error)")
                     DispatchQueue.main.async {
                         completion(.failure(ProfileServiceError.decodingError))
                     }
                 }
                 
             case .failure(let error):
-                print("❌ Сетевая ошибка: \(error)")
+                print("❌ [ProfileService] Сетевая ошибка: \(error)")
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }

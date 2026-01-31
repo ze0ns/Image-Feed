@@ -78,7 +78,7 @@ final class SplashViewController: UIViewController {
                 self.fetchImage()
                 self.goToMainTabController()
             case .failure(let error):
-                print("Ошибка: \(error.localizedDescription)")
+                print("[SplashViewController], Ошибка в методе полученя профиля: \(error.localizedDescription)")
             }
         }
     }
@@ -89,7 +89,7 @@ final class SplashViewController: UIViewController {
             case .success(let result):
                print(result)
             case .failure(let error):
-                print("Ошибка: \(error.localizedDescription)")
+                print("SplashViewController], Ошибка в методе полученя аватарки: \(error.localizedDescription)")
             }
         }
     }
@@ -111,7 +111,7 @@ final class SplashViewController: UIViewController {
     
     private func replaceRootViewController(with viewController: UIViewController) {
         guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid window configuration")
+            assertionFailure("SplashViewController] Неправильная конфигурация окна")
             return
         }
         
@@ -119,5 +119,12 @@ final class SplashViewController: UIViewController {
             window.rootViewController = viewController
             window.makeKeyAndVisible()
         }
+    }
+}
+//MARK: SwiftUI - for working canvas
+import SwiftUI
+struct SplashViewControllerProvider: PreviewProvider {
+    static var previews: some View {
+        VCProvider<SplashViewController>.previews
     }
 }

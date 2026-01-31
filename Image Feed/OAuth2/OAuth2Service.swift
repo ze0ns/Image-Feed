@@ -3,8 +3,8 @@ import Foundation
 enum AuthServiceError: Error {
     case invalidRequest
     case invalidToken
+    case duplicateRequest
 }
-
 final class OAuth2Service {
     // MARK: Static Properties
     static let shared = OAuth2Service()
@@ -13,6 +13,7 @@ final class OAuth2Service {
     private var networkClient = NetworkClient()
     private var storageToken = OAuth2TokenStorage.shared
     private let decoder: JSONDecoder
+    private var lastCode: String?
     
     private init() {
         decoder = JSONDecoder()
@@ -32,33 +33,58 @@ final class OAuth2Service {
     
     // MARK: - Public Methods
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) -> URLSessionTask {
+        // Проверяем дублирующие запросы
+        var shouldProceed = false
+        tokenQueue.sync {
+            if lastCode != code {
+                lastCode = code
+                shouldProceed = true
+            }
+        }
+        
+        guard shouldProceed else {
+            completion(.failure(AuthServiceError.duplicateRequest))
+            // Возвращаем пустую задачу, так как запрос не выполняется
+            return DummyURLSessionTask()
+        }
+        
         guard let request = makeOAuthTokenRequest(code: code) else {
+            tokenQueue.async(flags: .barrier) {
+                self.lastCode = nil
+            }
             completion(.failure(AuthServiceError.invalidRequest))
-            return URLSessionTask()
+            return DummyURLSessionTask()
         }
         
         let task = networkClient.fetch(request: request) { [weak self] result in
-            switch result {
-            case .success(let data):
-                do {
-                    let tokenBody = try self?.decoder.decode(OAuthTokenResponseBody.self, from: data)
-                    guard let token = tokenBody?.accessToken else {
-                        completion(.failure(AuthServiceError.invalidToken))
-                        return
+            // Очищаем lastCode после завершения запроса
+            self?.tokenQueue.async(flags: .barrier) {
+                self?.lastCode = nil
+            }
+            
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let data):
+                    do {
+                        let tokenBody = try self?.decoder.decode(OAuthTokenResponseBody.self, from: data)
+                        guard let token = tokenBody?.accessToken else {
+                            completion(.failure(AuthServiceError.invalidToken))
+                            return
+                        }
+                        self?.authToken = token
+                        completion(.success(token))
+                    } catch {
+                        completion(.failure(error))
                     }
-                    self?.authToken = token
-                    completion(.success(token))
-                } catch {
+                case .failure(let error):
                     completion(.failure(error))
                 }
-            case .failure(let error):
-                completion(.failure(error))
             }
         }
         
         return task
     }
-    
+
     // MARK: - Private Methods
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
         guard var urlComponents = URLComponents(string: "https://unsplash.com/oauth/token") else {
@@ -86,5 +112,14 @@ final class OAuth2Service {
         request.httpMethod = HTTPMethod.post.rawValue
         print("Запрос создан: method=\(request.httpMethod ?? "nil")")
         return request
+    }
+    private class DummyURLSessionTask: URLSessionTask {
+        override init() {
+            super.init()
+        }
+        
+        override func cancel() {
+            // Ничего не делаем, так как это dummy task
+        }
     }
 }

@@ -13,8 +13,10 @@ enum ProfileImageError: Error {
     case decodingError
 }
 final class ProfileImageService {
+    // MARK: - Singleton
     static let shared = ProfileImageService()
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    // MARK: - Private Properties
     private(set) var userImage: String = " "
     private var networkClient = NetworkClient()
     private var storageToken = OAuth2TokenStorage.shared
@@ -63,14 +65,14 @@ final class ProfileImageService {
                     }
                     
                 } catch {
-                    print("❌ ProfileImageService - Ошибка декодирования: \(error)")
+                    print("❌ [ProfileImageService] - Ошибка декодирования: \(error)")
                     DispatchQueue.main.async {
                         completion(.failure(ProfileServiceError.decodingError))
                     }
                 }
                 
             case .failure(let error):
-                print("❌ ProfileImageService - Сетевая ошибка: \(error.localizedDescription)")
+                print("❌ [ProfileImageService] - Сетевая ошибка: \(error.localizedDescription)")
                 DispatchQueue.main.async {
                     completion(.failure(error))
                 }
