@@ -15,35 +15,24 @@ enum ProfileImageError: Error {
 final class ProfileImageService {
     // MARK: - Singleton
     static let shared = ProfileImageService()
-    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    private init() {}
+    
+    static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
     // MARK: - Private Properties
     private(set) var userImage: String = " "
     private var networkClient = NetworkClient()
     private var storageToken = OAuth2TokenStorage.shared
-    private let decoder: JSONDecoder
-    // MARK: - Initialization
-    init() {
-        decoder = JSONDecoder()
-    }
-    // MARK: - Public Methods
-    private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
-        guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
-            return nil
-        }
 
-        var request = URLRequest(url: url)
-        request.httpMethod = "GET"
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        return request
-    }
+    // MARK: - Public Methods
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void){
         guard let token = storageToken.token else { return }
         guard let request = makeProfileImageRequest(username: username, token:  token) else {
             print("ProfileImageService: Не сформировался запрос для загрузки Аватарки")
             return
         }
-        networkClient.fetch(request: request) { [weak self] result in
+        _ =  networkClient.fetch(request: request) { [weak self] result in
             guard let self = self else { return }
+            let decoder = JSONDecoder()
             switch result {
             case .success(let data):
                 guard !data.isEmpty else {
@@ -53,7 +42,7 @@ final class ProfileImageService {
                     return
                 }
                 do {
-                    let userProfileBody = try self.decoder.decode(UserResult.self, from: data)
+                    let userProfileBody = try decoder.decode(UserResult.self, from: data)
                     DispatchQueue.main.async {
                         self.userImage = userProfileBody.profileImage.small
                         completion(.success(userProfileBody.profileImage.small))
@@ -78,5 +67,14 @@ final class ProfileImageService {
                 }
             }
         }
+    }
+    private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
+        guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get.rawValue
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        return request
     }
 }

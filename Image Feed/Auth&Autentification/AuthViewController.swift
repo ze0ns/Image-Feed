@@ -46,13 +46,13 @@ final class AuthViewController: UIViewController {
         setupActions()
     }
     override func viewWillDisappear(_ animated: Bool) {
-         super.viewWillDisappear(animated)
-         cancelActiveRequest()
-     }
-     
-     deinit {
-         cancelActiveRequest()
-     }
+        super.viewWillDisappear(animated)
+        cancelActiveRequest()
+    }
+    
+    deinit {
+        cancelActiveRequest()
+    }
     // MARK: - Request Management
     
     private func cancelActiveRequest() {
@@ -120,33 +120,33 @@ final class AuthViewController: UIViewController {
 // MARK: Extensions
 extension AuthViewController: WebViewViewControllerDelegate {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
-           vc.dismiss(animated: true)
-           cancelActiveRequest()
-           UIBlockingProgressHUD.show()
-           activeTask = oauth2Service.fetchOAuthToken(code) { [weak self] result in
-               guard let self = self else { return }
-               DispatchQueue.main.async {
-                   UIBlockingProgressHUD.dismiss()
-                   self.activeTask = nil
-                   switch result {
-                   case .success:
-                       self.delegate?.didAuthenticate(self)
-                       self.goToMainTabBarController()
-                   case .failure(let error):
-
-                       let nsError = error as NSError
-                       if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
-                           print("Запрос был отменен")
-                           return
-                       }
-                       self.showAuthErrorAlert()
-                   }
-               }
-           }
-       }
-       
-       func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
-           vc.dismiss(animated: true)
-       }
+        vc.dismiss(animated: true)
+        cancelActiveRequest()
+        UIBlockingProgressHUD.show()
+        activeTask = oauth2Service.fetchOAuthToken(code) { [weak self] result in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                UIBlockingProgressHUD.dismiss()
+                self.activeTask = nil
+                switch result {
+                case .success:
+                    self.delegate?.didAuthenticate(self)
+                    self.goToMainTabBarController()
+                case .failure(let error):
+                    
+                    let nsError = error as NSError
+                    if nsError.domain == NSURLErrorDomain && nsError.code == NSURLErrorCancelled {
+                        print("Запрос был отменен")
+                        return
+                    }
+                    self.showAuthErrorAlert()
+                }
+            }
+        }
+    }
+    
+    func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
+        vc.dismiss(animated: true)
+    }
 }
 

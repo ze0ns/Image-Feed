@@ -14,16 +14,13 @@ enum ProfileServiceError: Error {
 final class ProfileService {
     // MARK: - Singleton
     static let shared = ProfileService()
-    
+    private init() {}
     // MARK: - Private Properties
     private var networkClient = NetworkClient()
-    private let decoder: JSONDecoder
     private(set) var profile: Profile?
     
     // MARK: - Initialization
-    init() {
-        decoder = JSONDecoder()
-    }
+ 
     
     // MARK: - Public Methods
     func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
@@ -44,7 +41,7 @@ final class ProfileService {
         
         networkClient.fetch(request: request) { [weak self] result in
             guard let self = self else { return }
-            
+            let decoder = JSONDecoder()
             switch result {
             case .success(let data):
                 // Проверяем данные
@@ -56,7 +53,7 @@ final class ProfileService {
                 }
                 do {
 
-                    let profileBody = try self.decoder.decode(ProfileResult.self, from: data)
+                    let profileBody = try decoder.decode(ProfileResult.self, from: data)
                     let profile = Profile(
                         username: profileBody.username,
                         name: profileBody.name,

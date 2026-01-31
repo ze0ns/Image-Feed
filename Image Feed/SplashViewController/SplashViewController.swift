@@ -54,8 +54,7 @@ final class SplashViewController: UIViewController {
     }
     
     private func checkAuthStatus() {
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
+        DispatchQueue.main.async { 
             if  let token = self.authToken {
                 print("Идем в галерею")
                 self.fetchProfile(token)
@@ -83,8 +82,7 @@ final class SplashViewController: UIViewController {
         }
     }
     private func fetchImage(){
-        ProfileImageService.shared.fetchProfileImageURL(username: self.username){ [weak self] result in
-            guard let self = self else { return }
+        ProfileImageService.shared.fetchProfileImageURL(username: self.username){ result in
             switch result {
             case .success(let result):
                print(result)

@@ -8,7 +8,7 @@
 import UIKit
 import Kingfisher
 
-class ProfileViewController: UIViewController {
+final class ProfileViewController: UIViewController {
     
     // MARK: - Private Properties
     private lazy var userFIO = UILabel()
@@ -84,7 +84,7 @@ class ProfileViewController: UIViewController {
     private func updateProfileDetails(profile: Profile) {
         print("Заполняем профиль")
         DispatchQueue.main.async {
-            self.userFIO.text = profile.name ?? "Имя не указано"
+            self.userFIO.text = profile.name
             self.loginName.text = profile.loginName
             self.comments.text = profile.bio ?? "Нет описания"
        //     self.upadeAvatar(urlImage: ProfileImageService.shared.userImage)

@@ -45,7 +45,7 @@ final class OAuth2Service {
         guard shouldProceed else {
             completion(.failure(AuthServiceError.duplicateRequest))
             // Возвращаем пустую задачу, так как запрос не выполняется
-            return DummyURLSessionTask()
+            return URLSessionTask()
         }
         
         guard let request = makeOAuthTokenRequest(code: code) else {
@@ -53,7 +53,7 @@ final class OAuth2Service {
                 self.lastCode = nil
             }
             completion(.failure(AuthServiceError.invalidRequest))
-            return DummyURLSessionTask()
+            return URLSessionTask()
         }
         
         let task = networkClient.fetch(request: request) { [weak self] result in
@@ -112,14 +112,5 @@ final class OAuth2Service {
         request.httpMethod = HTTPMethod.post.rawValue
         print("Запрос создан: method=\(request.httpMethod ?? "nil")")
         return request
-    }
-    private class DummyURLSessionTask: URLSessionTask {
-        override init() {
-            super.init()
-        }
-        
-        override func cancel() {
-            // Ничего не делаем, так как это dummy task
-        }
     }
 }

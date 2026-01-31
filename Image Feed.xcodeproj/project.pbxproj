@@ -142,6 +142,7 @@
 				068C03AE2F24E1F600F79483 /* NetworkClient.swift */,
 				0689861E2F28F67C00E1BDA3 /* ProfileService.swift */,
 				0675B7B52F2B2908005195E9 /* ProfileImageService.swift */,
+				068C03AC2F24DBF900F79483 /* OAuth2TokenStorage.swift */,
 			);
 			path = NetworkLayer;
 			sourceTree = "<group>";
@@ -149,7 +150,6 @@
 		068C03AB2F24DBED00F79483 /* OAuth2 */ = {
 			isa = PBXGroup;
 			children = (
-				068C03AC2F24DBF900F79483 /* OAuth2TokenStorage.swift */,
 				068C03962F24C36700F79483 /* OAuth2Service.swift */,
 			);
 			path = OAuth2;
