@@ -76,6 +76,27 @@ extension ImagesListViewController: UITableViewDataSource {
         cell.selectionStyle = .none
         return cell
     }
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        print(ImagesListService.shared.images)
+        ImagesListService.shared.fetchPhotosNextPage {[weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let newPhotos):
+                    print(newPhotos)
+                //    self?.updateTableViewAnimated(with: newPhotos)
+                case .failure(let error as ImagesListServiceError):
+                    if case .alreadyLoading = error {
+                        // Игнорируем, так как загрузка уже идет
+                        return
+                    }
+                    print("[ImagesListViewController - tableView: Не удалось загрузить фото ]")
+                case .failure(let error):
+                    print("Ошибка: \(error)")
+                    print("[ImagesListViewController - tableView: Не удалось загрузить фото ]")
+                }
+            }
+        }
+    }
 }
 extension ImagesListViewController: UITableViewDelegate{
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

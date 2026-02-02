@@ -5,6 +5,7 @@ enum AuthServiceError: Error {
     case invalidToken
     case duplicateRequest
 }
+
 final class OAuth2Service {
     // MARK: Static Properties
     static let shared = OAuth2Service()
@@ -32,7 +33,7 @@ final class OAuth2Service {
     private let tokenQueue = DispatchQueue(label: "com.app.tokenQueue", qos: .userInitiated, attributes: .concurrent)
     
     // MARK: - Public Methods
-    func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) -> URLSessionTask {
+    func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) -> URLSessionTask? {
         // Проверяем дублирующие запросы
         var shouldProceed = false
         tokenQueue.sync {
@@ -44,8 +45,8 @@ final class OAuth2Service {
         
         guard shouldProceed else {
             completion(.failure(AuthServiceError.duplicateRequest))
-            // Возвращаем пустую задачу, так как запрос не выполняется
-            return URLSessionTask()
+            // Возвращаем nil, так как запрос не выполняется
+            return nil
         }
         
         guard let request = makeOAuthTokenRequest(code: code) else {
@@ -53,7 +54,7 @@ final class OAuth2Service {
                 self.lastCode = nil
             }
             completion(.failure(AuthServiceError.invalidRequest))
-            return URLSessionTask()
+            return nil
         }
         
         let task = networkClient.fetch(request: request) { [weak self] result in
