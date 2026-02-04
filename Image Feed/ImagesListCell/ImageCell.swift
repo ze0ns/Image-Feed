@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 protocol SelfConfiguringCell {
     static var reuseID: String {get}
@@ -27,6 +28,10 @@ final class ImageCell: UITableViewCell, SelfConfiguringCell {
         backgroundColor = .ypBlack
         setupViews()
         setupConstraints()
+    }
+    override func prepareForReuse() {
+        super.prepareForReuse()
+//        fullSizeImageView.kf.cancelDownloadTask()
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -73,19 +78,46 @@ final class ImageCell: UITableViewCell, SelfConfiguringCell {
     }
     // MARK: - Public Methods, Configure Cell
     func configure(
-        image: UIImage,
+        image: String,
+        height: Int,
+        width: Int,
         islike: UIImage,
         date: String,
         maxImageWidth: CGFloat
     ) {
-        imagesView.image = image
-
-        let imageAspect = image.size.height / image.size.width
+        //imagesView.image = image
+        updateImage(imageString: image)
+        let imageAspect = CGFloat(height) / CGFloat(width)
         let calculatedHeight = maxImageWidth * imageAspect
         
         imageHeightConstraint.constant = calculatedHeight
 
         like.setBackgroundImage(islike, for: .normal)
         dateLabel.text = date
+    }
+    private func updateImage(imageString: String){
+        let imageUrl = URL(string: imageString)
+        print("updateImage - imageUrl: \(imageUrl)")
+        let placeholderImage = UIImage(systemName: "person.circle.fill")?
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+        let processor = RoundCornerImageProcessor(cornerRadius: 35)
+        imagesView.kf.indicatorType = .activity
+        imagesView.kf.setImage(
+            with: imageUrl,
+            placeholder: placeholderImage,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .forceRefresh
+            ]) { result in
+                switch result {
+                case .success(let value):
+                    print(value.image)
+                case .failure(let error):
+                    print(error)
+                }
+            }
     }
 }
