@@ -63,6 +63,7 @@ final class ImagesListService {
                  do {
                      let decoder = JSONDecoder()
                      let images = try decoder.decode([Photo].self, from: data)
+                     print(images.first?.createdAt)
                      self.images.append(contentsOf: images)
                      self.currentPage += 1
                      NotificationCenter.default.post(
@@ -98,7 +99,7 @@ final class ImagesListService {
         var urlComponents = URLComponents(url: baseURL.appendingPathComponent("/photos"), resolvingAgainstBaseURL: true)
         urlComponents?.queryItems = [
             URLQueryItem(name: "page", value: "\(page)"),
-            URLQueryItem(name: "per_page", value: "10") // Можно увеличить количество фото на странице
+            URLQueryItem(name: "per_page", value: "10")
         ]
         guard let url = urlComponents?.url else {
             return nil
@@ -114,6 +115,28 @@ final class ImagesListService {
         isFetching = false
         currentPage = 1
         images.removeAll()
+    }
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void){
+        
+    }
+    private func makePhotoChangeLikeRequest(token: String, page: Int) -> URLRequest? {
+        guard let baseURL = URL(string: Constants.defaultBaseURLString) else {
+            return nil
+        }
+        var urlComponents = URLComponents(url: baseURL.appendingPathComponent("/photos"), resolvingAgainstBaseURL: true)
+        urlComponents?.queryItems = [
+            URLQueryItem(name: "page", value: "\(page)"),
+            URLQueryItem(name: "per_page", value: "10")
+        ]
+        guard let url = urlComponents?.url else {
+            return nil
+        }
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.get.rawValue
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        return request
+    }
+
     }
 }
 

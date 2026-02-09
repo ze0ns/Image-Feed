@@ -8,14 +8,16 @@
 
 import UIKit
 import Kingfisher
-
+protocol ImagesListCellDelegate: AnyObject {
+    func imageListCellDidTapLike(_ cell: ImageCell)
+} 
 final class ImagesListViewController: UIViewController {
     // MARK: - Private Properties
     private let tableView = UITableView()
     private let cellId = "ImagesListCell"
     private var photos: [Photo] = []
     private var isLoading = false
-    var imageURL = UIImage(resource: ._13)
+    var imageURL = UIImage(resource:.stub)
     
     private lazy var dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -88,7 +90,26 @@ final class ImagesListViewController: UIViewController {
         navController.modalPresentationStyle = .fullScreen
         present(navController, animated: true)
     }
-    
+    private func changePhotoLike(photoId: String){
+        // Поиск индекса элемента
+        if let index = self.photos.firstIndex(where: { $0.id == photoId }) {
+            // Текущий элемент
+            let photo = self.photos[index]
+            // Копия элемента с инвертированным значением isLiked.
+//            let newPhoto = Photo(
+//                id: photo.id,
+//                width: photo.width,
+//                height: photo.height,
+//                createdAt: photo.createdAt,
+//                description: photo.description,
+//                urls: photo.urls.thumb,
+//                likedByUser: !photo.likedByUser
+//            )
+            let newPhoto = Photo(id: photo.id, width: photo.width, height: photo.height, createdAt: photo.createdAt, description: photo.description, urls: photo.urls, likedByUser: photo.likedByUser)
+            // Заменяем элемент в массиве.
+          //  self.photos = self.photos.withReplaced(itemAt: index, newValue: newPhoto)
+        }
+    }
 }
 // MARK: - Extension TableViewCell
 extension ImagesListViewController: UITableViewDataSource {
@@ -100,17 +121,17 @@ extension ImagesListViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ImageCell
         let photo = photos[indexPath.row]
         let maxImageWidth = tableView.bounds.width - 32
-        
+        print(photo.createdAt)
         cell.configure(
             image: photo.urls.thumb,
             height: photo.height,
             width: photo.width,
-            islike: UIImage(resource: photo.liked_by_user ? .likeButtonOn : .likeButtonOff),
-            date: dateFormatter.string(from: Date()),
+            islike: photo.likedByUser,
+            date: photo.createdAt ?? dateFormatter.string(from:Date()),
             maxImageWidth: maxImageWidth
         )
         cell.selectionStyle = .none
-        
+        cell.delegate = self
         // Загружаем полноразмерное изображение
         if let url = URL(string: photo.urls.full) {
             KingfisherManager.shared.retrieveImage(with: url) { result in
@@ -170,12 +191,30 @@ extension ImagesListViewController: UITableViewDelegate {
         return tableViewWidth * aspectRatio + 8 // Добавляем отступы
     }
 }
-
-//extension ImagesListViewController: UITableViewDelegate{
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let currentImage = photos[indexPath.row]
-// //       imageURL = currentImage.urls.thumb
-//        changeRootToDestination()
-//    }
-//}
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imageListCellDidTapLike(_ cell: ImageCell) {
+        let imagesListService = ImagesListService.shared
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+           let photo = photos[indexPath.row]
+           // Покажем лоадер
+          UIBlockingProgressHUD.show()
+        ImagesListService.shared.changeLike(photoId: photo.id, isLike: !photo.likedByUser) { result in
+             switch result {
+             case .success:
+                // Синхронизируем массив картинок с сервисом
+                self.photos = imagesListService.images
+                // Изменим индикацию лайка картинки
+                 
+                // Уберём лоадер
+                UIBlockingProgressHUD.dismiss()
+             case .failure:
+                // Уберём лоадер
+                UIBlockingProgressHUD.dismiss()
+                // Покажем, что что-то пошло не так
+                // TODO: Показать ошибку с использованием UIAlertController
+                }
+             }
+    }
+    
+}
 
