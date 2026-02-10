@@ -120,6 +120,11 @@ final class ImageCell: UITableViewCell, SelfConfiguringCell {
                 }
             }
     }
+    func setIsLiked(_ isLiked: Bool) {
+        like.isSelected = isLiked
+        let imageName = isLiked ? "like_button_on" : "like_button_off"
+        like.setImage(UIImage(named: imageName), for: .normal)
+    }
     @objc private func likeButtonClicked() {
        delegate?.imageListCellDidTapLike(self)
     }

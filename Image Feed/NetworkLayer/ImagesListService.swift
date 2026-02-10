@@ -13,6 +13,7 @@ enum ImagesListServiceError: Error {
     case invalidRequest
     case noToken
     case alreadyLoading
+    case networkCodeError
 }
 final class ImagesListService {
 // MARK: - Singleton
@@ -63,7 +64,6 @@ final class ImagesListService {
                  do {
                      let decoder = JSONDecoder()
                      let images = try decoder.decode([Photo].self, from: data)
-                     print(images.first?.createdAt)
                      self.images.append(contentsOf: images)
                      self.currentPage += 1
                      NotificationCenter.default.post(
@@ -116,27 +116,66 @@ final class ImagesListService {
         currentPage = 1
         images.removeAll()
     }
-    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void){
-        
+    func changeLike(photoId: String, isLike: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let token = OAuth2TokenStorage.shared.token else {
+            completion(.failure(ImagesListServiceError.networkCodeError))
+            return
+        }
+        let request: URLRequest?
+        if isLike {
+            request = makePhotoChangeLikeRequest(token: token, photoId: photoId)
+        } else {
+            request = makePhotoUnlikeRequest(token: token, photoId: photoId)
+        }
+        guard let validRequest = request else {
+            completion(.failure(ImagesListServiceError.networkCodeError))
+            return
+        }
+
+        _ = networkClient.fetch(request: validRequest) { result in
+            switch result {
+            case .success( _ ):
+                completion(.success(()))
+            case .failure(let error):
+                print("Ошибка при изменении лайка: \(error.localizedDescription)")
+                completion(.failure(error))
+            }
+        }
     }
-    private func makePhotoChangeLikeRequest(token: String, page: Int) -> URLRequest? {
+   
+    private func makePhotoChangeLikeRequest(token: String, photoId: String) -> URLRequest? {
         guard let baseURL = URL(string: Constants.defaultBaseURLString) else {
             return nil
         }
-        var urlComponents = URLComponents(url: baseURL.appendingPathComponent("/photos"), resolvingAgainstBaseURL: true)
-        urlComponents?.queryItems = [
-            URLQueryItem(name: "page", value: "\(page)"),
-            URLQueryItem(name: "per_page", value: "10")
-        ]
+        let urlComponents = URLComponents(url: baseURL.appendingPathComponent("/photos/\(photoId)/like"),
+                                         resolvingAgainstBaseURL: true)
         guard let url = urlComponents?.url else {
             return nil
         }
         var request = URLRequest(url: url)
-        request.httpMethod = HTTPMethod.get.rawValue
+        request.httpMethod = HTTPMethod.post.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
 
+
+    private func makePhotoUnlikeRequest(token: String, photoId: String) -> URLRequest? {
+        guard let baseURL = URL(string: Constants.defaultBaseURLString) else {
+            return nil
+        }
+        
+        let urlComponents = URLComponents(url: baseURL.appendingPathComponent("/photos/\(photoId)/like"),
+                                         resolvingAgainstBaseURL: true)
+        
+        guard let url = urlComponents?.url else {
+            return nil
+        }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = HTTPMethod.delete.rawValue
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        return request
     }
 }
 

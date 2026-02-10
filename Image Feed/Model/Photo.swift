@@ -13,7 +13,7 @@ struct Photo: Decodable {
     let createdAt: String?
     let description: String?
     let urls: PhotoUrls
-    let likedByUser: Bool
+    var likedByUser: Bool
     
     struct PhotoUrls: Decodable {
         let raw: String
