@@ -6,10 +6,12 @@
 //
 
 import UIKit
+import Kingfisher
 
 protocol SelfConfiguringCell {
     static var reuseID: String {get}
 }
+
 final class ImageCell: UITableViewCell, SelfConfiguringCell {
     static var reuseID = "ImagesListCell"
     
@@ -18,8 +20,10 @@ final class ImageCell: UITableViewCell, SelfConfiguringCell {
     private lazy var isLiked: Bool = false
     private let dateLabel = UILabel()
     private lazy var like: UIButton = UIButton()
-
+    
     private var imageHeightConstraint: NSLayoutConstraint!
+    // MARK: - Public Properties, Delegate
+    weak var delegate: ImagesListCellDelegate?
     
     // MARK: - Lifecycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -27,6 +31,9 @@ final class ImageCell: UITableViewCell, SelfConfiguringCell {
         backgroundColor = .ypBlack
         setupViews()
         setupConstraints()
+    }
+    override func prepareForReuse() {
+        super.prepareForReuse()
     }
     @available(*, unavailable)
     required init?(coder: NSCoder) {
@@ -40,6 +47,7 @@ final class ImageCell: UITableViewCell, SelfConfiguringCell {
         imagesView.layer.cornerRadius = 16
         imagesView.translatesAutoresizingMaskIntoConstraints = false
         
+        like.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
         like.translatesAutoresizingMaskIntoConstraints = false
         
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
@@ -73,19 +81,51 @@ final class ImageCell: UITableViewCell, SelfConfiguringCell {
     }
     // MARK: - Public Methods, Configure Cell
     func configure(
-        image: UIImage,
-        islike: UIImage,
+        image: String,
+        height: Int,
+        width: Int,
+        islike: Bool,
         date: String,
         maxImageWidth: CGFloat
     ) {
-        imagesView.image = image
-
-        let imageAspect = image.size.height / image.size.width
+        updateImage(imageString: image)
+        let imageAspect = CGFloat(height) / CGFloat(width)
         let calculatedHeight = maxImageWidth * imageAspect
-        
         imageHeightConstraint.constant = calculatedHeight
-
-        like.setBackgroundImage(islike, for: .normal)
+        let userLiked = UIImage(resource: islike ? .likeButtonOn : .likeButtonOff)
+        like.setBackgroundImage(userLiked, for: .normal)
         dateLabel.text = date
+    }
+    private func updateImage(imageString: String){
+        let imageUrl = URL(string: imageString)
+        let placeholderImage = UIImage(resource:.stub)
+            .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
+        let processor = RoundCornerImageProcessor(cornerRadius: 6)
+        imagesView.kf.indicatorType = .activity
+        imagesView.kf.setImage(
+            with: imageUrl,
+            placeholder: placeholderImage,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .cacheOriginalImage,
+                .forceRefresh
+            ]) { result in
+                switch result {
+                case .success(let value):
+                    print(value.image)
+                case .failure(let error):
+                    print(error)
+                }
+            }
+    }
+    func setIsLiked(_ isLiked: Bool) {
+        like.isSelected = isLiked
+        let imageName = isLiked ? "like_button_on" : "like_button_off"
+        like.setImage(UIImage(named: imageName), for: .normal)
+    }
+    @objc private func likeButtonClicked() {
+       delegate?.imageListCellDidTapLike(self)
     }
 }
