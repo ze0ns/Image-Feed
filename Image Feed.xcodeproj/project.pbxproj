@@ -15,6 +15,7 @@
 		068350702F19F98C00DF7E6D /* ImageViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */; };
 		068350732F1A051A00DF7E6D /* ImagesViewMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350722F1A051A00DF7E6D /* ImagesViewMock.swift */; };
 		068350812F1A217800DF7E6D /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068350802F1A217800DF7E6D /* UIColor+Extensions.swift */; };
+		068587B52F3C3FA2003A7223 /* ProfileLogoutService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068587B42F3C3FA2003A7223 /* ProfileLogoutService.swift */; };
 		068715AD2F2CA5E600D9928C /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 068715AC2F2CA5E600D9928C /* Kingfisher */; };
 		068715B02F2CDEE800D9928C /* SwiftKeychainWrapper in Frameworks */ = {isa = PBXBuildFile; productRef = 068715AF2F2CDEE800D9928C /* SwiftKeychainWrapper */; };
 		068844142F1F4AAF009E08CC /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068844132F1F4AAF009E08CC /* SingleImageViewController.swift */; };
@@ -66,6 +67,7 @@
 		0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewCell.swift; sourceTree = "<group>"; };
 		068350722F1A051A00DF7E6D /* ImagesViewMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewMock.swift; sourceTree = "<group>"; };
 		068350802F1A217800DF7E6D /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
+		068587B42F3C3FA2003A7223 /* ProfileLogoutService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileLogoutService.swift; sourceTree = "<group>"; };
 		068813DB2F26084D005433F1 /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		068844132F1F4AAF009E08CC /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
 		068986132F287D9A00E1BDA3 /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
@@ -198,6 +200,7 @@
 		0694B3BD2F1E7057000EF4F0 /* Profiles */ = {
 			isa = PBXGroup;
 			children = (
+				068587B42F3C3FA2003A7223 /* ProfileLogoutService.swift */,
 				0694B3BE2F1E7066000EF4F0 /* ProfileViewController.swift */,
 			);
 			path = Profiles;
@@ -392,6 +395,7 @@
 			files = (
 				068844142F1F4AAF009E08CC /* SingleImageViewController.swift in Sources */,
 				068C03AD2F24DBF900F79483 /* OAuth2TokenStorage.swift in Sources */,
+				068587B52F3C3FA2003A7223 /* ProfileLogoutService.swift in Sources */,
 				068350732F1A051A00DF7E6D /* ImagesViewMock.swift in Sources */,
 				068C03AF2F24E1F600F79483 /* NetworkClient.swift in Sources */,
 				068350702F19F98C00DF7E6D /* ImageViewCell.swift in Sources */,

@@ -81,6 +81,9 @@ final class ProfileService {
             }
         }
     }
+    func removeProfile(){
+        self.profile = nil
+    }
 
 }
 

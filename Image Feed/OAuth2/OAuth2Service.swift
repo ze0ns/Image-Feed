@@ -34,7 +34,6 @@ final class OAuth2Service {
     
     // MARK: - Public Methods
     func fetchOAuthToken(_ code: String, completion: @escaping (Result<String, Error>) -> Void) -> URLSessionTask? {
-        // Проверяем дублирующие запросы
         var shouldProceed = false
         tokenQueue.sync {
             if lastCode != code {
@@ -45,7 +44,6 @@ final class OAuth2Service {
         
         guard shouldProceed else {
             completion(.failure(AuthServiceError.duplicateRequest))
-            // Возвращаем nil, так как запрос не выполняется
             return nil
         }
         
@@ -58,7 +56,6 @@ final class OAuth2Service {
         }
         
         let task = networkClient.fetch(request: request) { [weak self] result in
-            // Очищаем lastCode после завершения запроса
             self?.tokenQueue.async(flags: .barrier) {
                 self?.lastCode = nil
             }

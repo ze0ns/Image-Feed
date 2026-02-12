@@ -15,7 +15,6 @@ final class ProfileViewController: UIViewController {
     private lazy var loginName = UILabel()
     private lazy var comments = UILabel()
     private var profileImageServiceObserver: NSObjectProtocol?
-    
     private lazy var avatar: UIImageView = {
         var avatar = UIImageView()
         avatar.contentMode = .scaleAspectFit
@@ -103,6 +102,8 @@ final class ProfileViewController: UIViewController {
         comments.textColor = .ypWhite
         comments.font = .systemFont(ofSize: 13)
         
+        exit.addTarget(self, action: #selector(tapExit), for: .touchUpInside)
+        
         avatar.translatesAutoresizingMaskIntoConstraints = false
         exit.translatesAutoresizingMaskIntoConstraints = false
         userFIO.translatesAutoresizingMaskIntoConstraints = false
@@ -154,6 +155,14 @@ final class ProfileViewController: UIViewController {
         avatar.image = avatarGet
         loginName.text = loginNameGet
         comments.text = commentsGet
+    }
+    // MARK: - Actions
+    @objc private func tapExit(_ sender: UIButton){
+        print("Нажата кнопка выход")
+        ProfileLogoutService.shared.logout()
+        let navController = UINavigationController(rootViewController: AuthViewController())
+        navController.modalPresentationStyle = .fullScreen
+        present(navController, animated: true)
     }
 }
 //MARK: SwiftUI - for working canvas

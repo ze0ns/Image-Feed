@@ -158,7 +158,7 @@ extension ImagesListViewController: UITableViewDelegate {
         let singleImageVC = SingleImageViewController()
         
         // Передаем URL полноразмерного изображения
- //       singleImageVC.imageURL = URL(string: photo.urls.full)
+        singleImageVC.fullImageURL = photo.urls.full
         
         let navController = UINavigationController(rootViewController: singleImageVC)
         navController.modalPresentationStyle = .fullScreen
