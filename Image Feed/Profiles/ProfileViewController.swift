@@ -15,6 +15,7 @@ final class ProfileViewController: UIViewController {
     private lazy var loginName = UILabel()
     private lazy var comments = UILabel()
     private var profileImageServiceObserver: NSObjectProtocol?
+    private var animationLayer: CAGradientLayer?
     private lazy var avatar: UIImageView = {
         var avatar = UIImageView()
         avatar.contentMode = .scaleAspectFit
@@ -51,9 +52,17 @@ final class ProfileViewController: UIViewController {
         setupViews()
         setupConstraints()
     }
+    override func viewDidLayoutSubviews() {
+         super.viewDidLayoutSubviews()
+         animationLayer?.frame = avatar.bounds
+         avatar.layer.cornerRadius = avatar.frame.height / 2
+     }
     private func updateAvatar() {
-        guard let imageUrl = URL(string: ProfileImageService.shared.userImage) else { return }
-        print("imageUrl: \(imageUrl)")
+        guard let imageUrl = URL(string: ProfileImageService.shared.userImage) else {
+            showAvatarSkeleton()
+            return
+        }
+        hideAvatarSkeleton()
         let placeholderImage = UIImage(systemName: "person.circle.fill")?
             .withTintColor(.lightGray, renderingMode: .alwaysOriginal)
             .withConfiguration(UIImage.SymbolConfiguration(pointSize: 70, weight: .regular, scale: .large))
@@ -109,6 +118,7 @@ final class ProfileViewController: UIViewController {
         userFIO.translatesAutoresizingMaskIntoConstraints = false
         loginName.translatesAutoresizingMaskIntoConstraints = false
         comments.translatesAutoresizingMaskIntoConstraints = false
+    
         view.addSubview(avatar)
         view.addSubview(exit)
         view.addSubview(userFIO)
@@ -116,6 +126,47 @@ final class ProfileViewController: UIViewController {
         view.addSubview(comments)
         
     }
+    private func showAvatarSkeleton() {
+           // Убираем существующий градиент, если есть
+           hideAvatarSkeleton()
+           
+           // Создаем градиент для скелетона
+           let gradient = CAGradientLayer()
+           gradient.frame = avatar.bounds
+           gradient.locations = [0, 0.1, 0.3]
+           gradient.colors = [
+               UIColor(red: 0.682, green: 0.686, blue: 0.706, alpha: 1).cgColor,
+               UIColor(red: 0.531, green: 0.533, blue: 0.553, alpha: 1).cgColor,
+               UIColor(red: 0.431, green: 0.433, blue: 0.453, alpha: 1).cgColor
+           ]
+           gradient.startPoint = CGPoint(x: 0, y: 0.5)
+           gradient.endPoint = CGPoint(x: 1, y: 0.5)
+           gradient.cornerRadius = 35
+           gradient.masksToBounds = true
+           
+           // Добавляем анимацию движения градиента
+           let animation = CABasicAnimation(keyPath: "locations")
+           animation.fromValue = [0, 0.1, 0.3]
+           animation.toValue = [0.7, 0.8, 1.0]
+           animation.duration = 1.5
+           animation.repeatCount = .infinity
+           animation.autoreverses = true
+           gradient.add(animation, forKey: "skeletonAnimation")
+           
+           // Сохраняем ссылку и добавляем слой
+           animationLayer = gradient
+           avatar.layer.addSublayer(gradient)
+           
+           // Делаем фон аватара прозрачным, чтобы был виден градиент
+           avatar.backgroundColor = .clear
+           avatar.image = nil
+       }
+       
+       private func hideAvatarSkeleton() {
+           animationLayer?.removeFromSuperlayer()
+           animationLayer = nil
+           avatar.backgroundColor = .ypBlack
+       }
     // MARK: - Private Methods, configure Constraints
     private func setupConstraints(){
         NSLayoutConstraint.activate([
@@ -157,12 +208,25 @@ final class ProfileViewController: UIViewController {
         comments.text = commentsGet
     }
     // MARK: - Actions
-    @objc private func tapExit(_ sender: UIButton){
+    @objc private func tapExit(_ sender: UIButton) {
         print("Нажата кнопка выход")
-        ProfileLogoutService.shared.logout()
-        let navController = UINavigationController(rootViewController: AuthViewController())
-        navController.modalPresentationStyle = .fullScreen
-        present(navController, animated: true)
+        
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
+        alert.addAction(UIAlertAction(title: "Да", style: .destructive) { [weak self] _ in
+            ProfileLogoutService.shared.logout()
+            let navController = UINavigationController(rootViewController: AuthViewController())
+            navController.modalPresentationStyle = .fullScreen
+            self?.present(navController, animated: true)
+        })
+        
+        alert.addAction(UIAlertAction(title: "Нет", style: .default))
+        
+        present(alert, animated: true)
     }
 }
 //MARK: SwiftUI - for working canvas

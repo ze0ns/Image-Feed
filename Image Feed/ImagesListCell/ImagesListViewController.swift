@@ -18,14 +18,13 @@ final class ImagesListViewController: UIViewController {
     private let cellId = "ImagesListCell"
     private var photos: [Photo] = []
     private var isLoading = false
-    
-    private lazy var dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "dd MMMM yyyy"
-        formatter.locale = Locale(identifier: "ru_RU")
-        return formatter
-    }()
-    
+    private lazy var dateForma: DateFormatter = {
+         let formatter = DateFormatter()
+         formatter.dateFormat = "dd MMMM yyyy"
+         formatter.locale = Locale(identifier: "ru_RU")
+         return formatter
+     }()
+    private let dateFormatter = ISO8601DateFormatter()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -111,12 +110,14 @@ extension ImagesListViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ImageCell
         let photo = photos[indexPath.row]
         let maxImageWidth = tableView.bounds.width - 32
-        let dateString: String
-        if let createdAt = photo.createdAt {
-            let imageData = dateFormatter.date(from: createdAt) ?? Date()
-            dateString = dateFormatter.string(from: imageData)
-        } else {
-            dateString = ""
+
+        var imageData = "Неизвестная дата" // Значение по умолчанию
+        
+        
+        if let createdAt = photo.createdAt,
+           let date = dateFormatter.date(from: createdAt) {
+
+            imageData = dateForma.string(from: date)
         }
         
         cell.configure(
@@ -124,7 +125,7 @@ extension ImagesListViewController: UITableViewDataSource {
             height: photo.height,
             width: photo.width,
             islike: photo.likedByUser,
-            date: dateString,
+            date: String(imageData),
             maxImageWidth: maxImageWidth
         )
         cell.selectionStyle = .none
