@@ -8,7 +8,14 @@
 import UIKit
 
 // MARK: - Photo Models
-
+enum ImagesListServiceError: Error {
+    case alreadyLoading
+    case noToken
+    case invalidRequest
+    case invalidImages
+    case networkCodeError
+    case decodingError
+}
 
 final class ImagesListService {
     // MARK: - Singleton

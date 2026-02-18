@@ -10,7 +10,7 @@ struct Photo {
     let id: String
     let width: Int
     let height: Int
-    let createdAt: String?
+    let createdAt: Date?  // Изменено с String? на Date?
     let description: String?
     let thumbImageURL: String
     let fullImageURL: String
@@ -20,7 +20,12 @@ struct Photo {
         self.id = photoResult.id
         self.width = photoResult.width
         self.height = photoResult.height
-        self.createdAt = photoResult.createdAt
+        // Преобразование строки в Date на уровне маппинга
+        if let createdAtString = photoResult.createdAt {
+            self.createdAt = ISO8601DateFormatter().date(from: createdAtString)
+        } else {
+            self.createdAt = nil
+        }
         self.description = photoResult.description
         self.thumbImageURL = photoResult.urls.thumb
         self.fullImageURL = photoResult.urls.full

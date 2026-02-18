@@ -1,8 +1,8 @@
 //
-//  LaunchScreenViewController.swift
+//  ImagesListService.swift
 //  Image Feed
 //
-//  Created by Oschepkov Aleksandr on 15.01.2026.
+//  Created by Oschepkov Aleksandr on 02.02.2026.
 //
 
 import UIKit
@@ -18,13 +18,12 @@ final class ImagesListViewController: UIViewController {
     private let cellId = "ImagesListCell"
     private var photos: [Photo] = []
     private var isLoading = false
-    private lazy var dateForma: DateFormatter = {
+    private lazy var dateFormatter: DateFormatter = {
          let formatter = DateFormatter()
          formatter.dateFormat = "dd MMMM yyyy"
          formatter.locale = Locale(identifier: "ru_RU")
          return formatter
      }()
-    private let dateFormatter = ISO8601DateFormatter()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -114,11 +113,10 @@ extension ImagesListViewController: UITableViewDataSource {
         let photo = photos[indexPath.row]
         let maxImageWidth = tableView.bounds.width - 32
 
-        var imageData = "Неизвестная дата"
-        
-        if let createdAt = photo.createdAt,
-           let date = dateFormatter.date(from: createdAt) {
-            imageData = dateForma.string(from: date)
+        // Форматирование даты для отображения
+        var dateString = ""
+        if let createdAt = photo.createdAt {
+            dateString = dateFormatter.string(from: createdAt)
         }
         
         cell.configure(
@@ -126,7 +124,7 @@ extension ImagesListViewController: UITableViewDataSource {
             height: photo.height,
             width: photo.width,
             islike: photo.likedByUser,
-            date: imageData,
+            date: dateString,
             maxImageWidth: maxImageWidth
         )
         cell.selectionStyle = .none
@@ -178,7 +176,9 @@ extension ImagesListViewController: ImagesListCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
         let newLikeStatus = !photo.likedByUser
+        
         UIBlockingProgressHUD.show()
+        
         ImagesListService.shared.changeLike(photoId: photo.id, isLike: newLikeStatus) { [weak self] result in
             DispatchQueue.main.async {
                 switch result {

@@ -6,7 +6,6 @@
 //
 import Foundation
 
-
 struct PhotoResult: Decodable {
     let id: String
     let width: Int
@@ -32,14 +31,4 @@ struct UrlsResult: Decodable {
     let regular: String
     let small: String
     let thumb: String
-}
-
-enum ImagesListServiceError: Error {
-    case invalidURL
-    case invalidImages
-    case decodingError
-    case invalidRequest
-    case noToken
-    case alreadyLoading
-    case networkCodeError
 }
