@@ -12,7 +12,7 @@ protocol SelfConfiguringCell {
     static var reuseID: String {get}
 }
 
-final class ImageCell: UITableViewCell, SelfConfiguringCell {
+final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
     static var reuseID = "ImagesListCell"
     
     // MARK: - Private Properties

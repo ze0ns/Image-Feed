@@ -9,7 +9,7 @@ import UIKit
 import Kingfisher
 
 protocol ImagesListCellDelegate: AnyObject {
-    func imageListCellDidTapLike(_ cell: ImageCell)
+    func imageListCellDidTapLike(_ cell: ImagesListCell)
 }
 
 final class ImagesListViewController: UIViewController {
@@ -37,7 +37,7 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - Private Methods
     private func setupTableView() {
-        tableView.register(ImageCell.self, forCellReuseIdentifier: cellId)
+        tableView.register(ImagesListCell.self, forCellReuseIdentifier: cellId)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .ypBlack
@@ -93,7 +93,7 @@ final class ImagesListViewController: UIViewController {
             updatedPhoto.likedByUser = isLiked
             photos[index] = updatedPhoto
 
-            if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? ImageCell {
+            if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? ImagesListCell {
                 cell.setIsLiked(isLiked)
             }
         }
@@ -107,16 +107,17 @@ extension ImagesListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as! ImageCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ImagesListCell else {
+            return UITableViewCell()
+        }
+        
         let photo = photos[indexPath.row]
         let maxImageWidth = tableView.bounds.width - 32
 
-        var imageData = "Неизвестная дата" // Значение по умолчанию
-        
+        var imageData = "Неизвестная дата"
         
         if let createdAt = photo.createdAt,
            let date = dateFormatter.date(from: createdAt) {
-
             imageData = dateForma.string(from: date)
         }
         
@@ -125,7 +126,7 @@ extension ImagesListViewController: UITableViewDataSource {
             height: photo.height,
             width: photo.width,
             islike: photo.likedByUser,
-            date: String(imageData),
+            date: imageData,
             maxImageWidth: maxImageWidth
         )
         cell.selectionStyle = .none
@@ -135,7 +136,6 @@ extension ImagesListViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        // Загружаем следующую страницу когда приближаемся к концу списка
         if indexPath.row == photos.count - 3 && !isLoading {
             isLoading = true
             ImagesListService.shared.fetchPhotosNextPage { [weak self] result in
@@ -158,7 +158,6 @@ extension ImagesListViewController: UITableViewDelegate {
         let photo = photos[indexPath.row]
         let singleImageVC = SingleImageViewController()
         
-        // Передаем URL полноразмерного изображения
         singleImageVC.fullImageURL = photo.urls.full
         
         let navController = UINavigationController(rootViewController: singleImageVC)
@@ -175,7 +174,7 @@ extension ImagesListViewController: UITableViewDelegate {
 }
 
 extension ImagesListViewController: ImagesListCellDelegate {
-    func imageListCellDidTapLike(_ cell: ImageCell) {
+    func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
         let newLikeStatus = !photo.likedByUser
