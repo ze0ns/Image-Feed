@@ -69,7 +69,7 @@ final class ImagesListViewController: UIViewController {
     }
     
     private func updateTableViewAnimated() {
-        let newPhotos = ImagesListService.shared.images
+        let newPhotos = ImagesListService.shared.photos
         let oldCount = photos.count
         let newCount = newPhotos.count
         
@@ -122,7 +122,7 @@ extension ImagesListViewController: UITableViewDataSource {
         }
         
         cell.configure(
-            image: photo.urls.thumb,
+            image: photo.thumbImageURL,
             height: photo.height,
             width: photo.width,
             islike: photo.likedByUser,
@@ -158,7 +158,7 @@ extension ImagesListViewController: UITableViewDelegate {
         let photo = photos[indexPath.row]
         let singleImageVC = SingleImageViewController()
         
-        singleImageVC.fullImageURL = photo.urls.full
+        singleImageVC.fullImageURL = photo.fullImageURL
         
         let navController = UINavigationController(rootViewController: singleImageVC)
         navController.modalPresentationStyle = .fullScreen
