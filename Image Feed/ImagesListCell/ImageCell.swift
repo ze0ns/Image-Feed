@@ -20,8 +20,8 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
     private lazy var isLiked: Bool = false
     private let dateLabel = UILabel()
     private lazy var like: UIButton = UIButton()
-    
     private var imageHeightConstraint: NSLayoutConstraint!
+    
     // MARK: - Public Properties, Delegate
     weak var delegate: ImagesListCellDelegate?
     
@@ -39,6 +39,7 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
     required init?(coder: NSCoder) {
         nil
     }
+    
     // MARK: - Private Methods, setup View
     private func setupViews() {
         
@@ -58,6 +59,7 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
         contentView.addSubview(like)
         contentView.addSubview(dateLabel)
     }
+    
     // MARK: - Private Methods, setup Constraints
     private func setupConstraints() {
         NSLayoutConstraint.activate([
@@ -79,6 +81,7 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
         imageHeightConstraint = imagesView.heightAnchor.constraint(equalToConstant: 0)
         imageHeightConstraint.isActive = true
     }
+    
     // MARK: - Public Methods, Configure Cell
     func configure(
         image: String,
