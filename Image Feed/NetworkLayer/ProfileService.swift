@@ -39,7 +39,7 @@ final class ProfileService {
         
         print("🔍 Загружаем профиль по URL: \(url)")
         
-        networkClient.fetch(request: request) { [weak self] result in
+       _ =  networkClient.fetch(request: request) { [weak self] result in
             guard let self = self else { return }
             let decoder = JSONDecoder()
             switch result {
@@ -80,6 +80,9 @@ final class ProfileService {
                 }
             }
         }
+    }
+    func removeProfile(){
+        self.profile = nil
     }
 
 }

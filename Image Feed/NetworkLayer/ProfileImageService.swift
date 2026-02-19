@@ -23,6 +23,7 @@ final class ProfileImageService {
     private var networkClient = NetworkClient()
     private var storageToken = OAuth2TokenStorage.shared
 
+
     // MARK: - Public Methods
     func fetchProfileImageURL(username: String, _ completion: @escaping (Result<String, Error>) -> Void){
         guard let token = storageToken.token else { return }
@@ -69,12 +70,16 @@ final class ProfileImageService {
         }
     }
     private func makeProfileImageRequest(username: String, token: String) -> URLRequest? {
-        guard let url = URL(string: "https://api.unsplash.com/users/\(username)") else {
+        let urlString = Constants.defaultBaseURLString + "/users/\(username)"
+        guard let url = URL(string: urlString) else {
             return nil
         }
         var request = URLRequest(url: url)
         request.httpMethod = HTTPMethod.get.rawValue
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
+    }
+    func removeAvatar(){
+        self.userImage = " "
     }
 }

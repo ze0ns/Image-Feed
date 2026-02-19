@@ -6,18 +6,15 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class SingleImageViewController: UIViewController {
+   
     // MARK: - Public Properties
-    var imageURL: UIImage? {
-        didSet {
-            imageView.image = imageURL
-            guard  let imageURL else { return }
-            imageView.frame.size = imageURL.size
-            rescaleAndCenterImageInScrollView(image: imageURL)
-        }
-    }
+    var fullImageURL: String?
+    
     // MARK: - Private Properties
+    private let placeholder = UIImage(named: "Stub")
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
     private lazy var backButton: UIButton = {
@@ -42,9 +39,9 @@ final class SingleImageViewController: UIViewController {
         super.viewDidLoad()
         scrollView.minimumZoomScale = 0.1
         scrollView.maximumZoomScale = 1.25
-        guard let imageURL else { return }
-        imageView.image = imageURL
-        imageView.frame.size = imageURL.size
+        guard let placeholder else { return }
+        imageView.image = placeholder
+        imageView.frame.size = placeholder.size
         setupViews()
         setupConstraints()
         configureScrollView()
@@ -52,8 +49,10 @@ final class SingleImageViewController: UIViewController {
     
     override func viewWillLayoutSubviews() {
         super.viewWillLayoutSubviews()
-        guard  let imageURL else { return }
-        rescaleAndCenterImageInScrollView(image: imageURL)
+        guard  let fullImageURL else { return }
+        loadSingleImage(fullImageURL: fullImageURL)
+        guard  let placeholder else { return }
+        rescaleAndCenterImageInScrollView(image: placeholder)
     }
     
     // MARK: - Private Properties, configure UI
@@ -108,8 +107,8 @@ final class SingleImageViewController: UIViewController {
     // MARK: - Private Properties, configure ScrollView
     private func configureScrollView() {
         scrollView.delegate = self
-        guard  let imageURL else { return }
-        let imageSize = imageURL.size
+        guard  let placeholder else { return }
+        let imageSize = placeholder.size
         let screenSize = UIScreen.main.bounds.size
         let widthRatio = screenSize.width / imageSize.width
         let heightRatio = screenSize.height / imageSize.height
@@ -137,6 +136,27 @@ final class SingleImageViewController: UIViewController {
         let y = (newContentSize.height - visibleRectSize.height) / 2
         scrollView.setContentOffset(CGPoint(x: x, y: y), animated: false)
     }
+    private func loadSingleImage(fullImageURL: String){
+        UIBlockingProgressHUD.show()
+            guard let url = URL(string: fullImageURL) else {
+                UIBlockingProgressHUD.dismiss()
+                print("❌ Неверный URL: \(fullImageURL)")
+                return
+            }
+        imageView.kf.setImage(
+            with: url,
+            placeholder: placeholder) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+            
+            guard let self = self else { return }
+            switch result {
+            case .success(let imageResult):
+                self.rescaleAndCenterImageInScrollView(image: imageResult.image)
+            case .failure(let error):
+                print("❌ Ошибка загрузки изображения: \(error.localizedDescription)")
+            }
+        }
+    }
     // MARK: - Actions
     @objc private func backToFirstScreen() {
         guard let navController = navigationController else { return }
@@ -144,9 +164,9 @@ final class SingleImageViewController: UIViewController {
         navController.setViewControllers([sourceVC], animated: true)
     }
     @objc private func didTapShareButton(_ sender: UIButton) {
-        guard let imageURL else { return }
+        guard let placeholder else { return }
         let share = UIActivityViewController(
-            activityItems: [imageURL],
+            activityItems: [placeholder],
             applicationActivities: nil
         )
         present(share, animated: true, completion: nil)

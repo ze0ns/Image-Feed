@@ -28,8 +28,6 @@ final class SplashViewController: UIViewController {
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        var token = authToken
-        print(authToken)
         setupUI()
         setupConstraints()
     }
