@@ -46,6 +46,7 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     // MARK: - Public Methods
     func viewDidLoad() {
         fetchNextPage()
+        view?.hideLoading()
     }
     
     func getPhoto(at index: Int) -> Photo {
