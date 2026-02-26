@@ -52,7 +52,7 @@ final class SplashViewController: UIViewController {
     }
     
     private func checkAuthStatus() {
-        DispatchQueue.main.async { 
+        DispatchQueue.main.async {
             if  let token = self.authToken {
                 print("Идем в галерею")
                 self.fetchProfile(token)

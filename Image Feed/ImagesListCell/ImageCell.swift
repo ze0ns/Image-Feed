@@ -132,3 +132,4 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
        delegate?.imageListCellDidTapLike(self)
     }
 }
+
