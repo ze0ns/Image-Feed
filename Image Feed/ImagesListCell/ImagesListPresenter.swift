@@ -46,7 +46,6 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     // MARK: - Public Methods
     func viewDidLoad() {
         fetchNextPage()
-        view?.hideLoading()
     }
     
     func getPhoto(at index: Int) -> Photo {
@@ -57,15 +56,15 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
         guard !isLoading else { return }
         
         isLoading = true
-        view?.showLoading()
+//        view?.showLoading()
         
         imagesListService.fetchPhotosNextPage { [weak self] result in
             guard let self = self else { return }
             
             DispatchQueue.main.async {
-                self.isLoading = false
-                self.view?.hideLoading()
-                
+//                self.isLoading = false
+//                self.view?.hideLoading()
+//                
                 switch result {
                 case .success(let newPhotos):
                     self.handleNewPhotos(newPhotos)

@@ -50,6 +50,7 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
         
         like.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
         like.translatesAutoresizingMaskIntoConstraints = false
+        like.accessibilityIdentifier = "LikeButton"
         
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         dateLabel.textColor = .ypWhite

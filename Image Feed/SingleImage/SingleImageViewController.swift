@@ -23,6 +23,7 @@ final class SingleImageViewController: UIViewController {
         button.tintColor = .ypWhite
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(backToFirstScreen), for: .touchUpInside)
+        button.accessibilityIdentifier = "BackButton"
         return button
     }()
     private lazy var shareButton: UIButton = {
@@ -62,6 +63,7 @@ final class SingleImageViewController: UIViewController {
         scrollView.backgroundColor = .black
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.accessibilityIdentifier = "SingleImageScrollView"
         
         // ImageView
         imageView.contentMode = .scaleAspectFill

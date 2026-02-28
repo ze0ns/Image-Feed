@@ -52,6 +52,7 @@ final class ImagesListViewController: UIViewController {
         tableView.delegate = self
         tableView.backgroundColor = .ypBlack
         tableView.separatorStyle = .none
+        tableView.accessibilityIdentifier = "FeedTable"
     }
     
     private func configureTable() {

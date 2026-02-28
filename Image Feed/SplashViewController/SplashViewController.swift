@@ -67,7 +67,7 @@ final class SplashViewController: UIViewController {
     private func fetchProfile(_ token: String){
         UIBlockingProgressHUD.show()
         ProfileService.shared.fetchProfile(token) { [weak self] result in
-            UIBlockingProgressHUD.dismiss()
+           UIBlockingProgressHUD.dismiss()
             guard let self = self else { return }
             switch result {
             case .success(let result):
@@ -115,12 +115,5 @@ final class SplashViewController: UIViewController {
             window.rootViewController = viewController
             window.makeKeyAndVisible()
         }
-    }
-}
-//MARK: SwiftUI - for working canvas
-import SwiftUI
-struct SplashViewControllerProvider: PreviewProvider {
-    static var previews: some View {
-        VCProvider<SplashViewController>.previews
     }
 }
