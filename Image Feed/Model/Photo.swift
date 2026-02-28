@@ -10,7 +10,7 @@ struct Photo {
     let id: String
     let width: Int
     let height: Int
-    let createdAt: Date?  // Изменено с String? на Date?
+    let createdAt: Date?  
     let description: String?
     let thumbImageURL: String
     let fullImageURL: String

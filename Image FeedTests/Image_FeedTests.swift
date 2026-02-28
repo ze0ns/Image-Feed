@@ -173,7 +173,7 @@ final class WebViewTests: XCTestCase {
     }
     
     func testCodeFromURL() {
- 
+        
         let authHelper = AuthHelper()
         
         var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native")!

@@ -1,8 +1,8 @@
 //
-//  ImagesListService.swift
+//  ImagesListViewController.swift
 //  Image Feed
 //
-//  Created by Oschepkov Aleksandr on 02.02.2026.
+//  Created by Oschepkov Aleksandr on 15.01.2026.
 //
 
 import UIKit
@@ -11,6 +11,7 @@ import Kingfisher
 protocol ImagesListCellDelegate: AnyObject {
     func imageListCellDidTapLike(_ cell: ImagesListCell)
 }
+
 protocol ImagesListViewProtocol: AnyObject {
     func updateTableViewAnimated(oldCount: Int, newCount: Int)
     func updateCellLikeStatus(at indexPath: IndexPath, isLiked: Bool)
@@ -37,7 +38,20 @@ final class ImagesListViewController: UIViewController {
     
     // MARK: - Setup
     private func setupPresenter() {
-        presenter = ImagesListPresenter(view: self)
+        // Создаем реальный сервис для продакшена
+        let service = ImagesListService.shared
+        presenter = ImagesListPresenter(
+            view: self,
+            imagesListService: service,
+            dateFormatter: createDateFormatter()
+        )
+    }
+    
+    private func createDateFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale(identifier: "ru_RU")
+        return formatter
     }
     
     private func setupUI() {
@@ -52,7 +66,6 @@ final class ImagesListViewController: UIViewController {
         tableView.delegate = self
         tableView.backgroundColor = .ypBlack
         tableView.separatorStyle = .none
-        tableView.accessibilityIdentifier = "FeedTable"
     }
     
     private func configureTable() {
@@ -121,8 +134,12 @@ extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ImagesListCell,
-              let photo = presenter?.getPhoto(at: indexPath.row) else {
+              let photo = presenter?.getPhoto(at: indexPath.row) else { // Безопасное извлечение
             return UITableViewCell()
+        }
+        guard let photo = presenter?.getPhoto(at: indexPath.row) else {
+            print("⚠️ [ImagesListVC] - Не удалось получить фото для ячейки по индексу: \(indexPath.row)")
+            return cell
         }
         
         let maxImageWidth = tableView.bounds.width - 32
@@ -174,4 +191,3 @@ extension ImagesListViewController: ImagesListCellDelegate {
         presenter?.didTapLike(at: indexPath)
     }
 }
-

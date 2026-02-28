@@ -16,8 +16,13 @@ enum ImagesListServiceError: Error {
     case networkCodeError
     case decodingError
 }
+protocol ImagesListServiceProtocol {
+    func fetchPhotosNextPage(completion: @escaping (Result<[Photo], Error>) -> Void)
+    func changeLike(photoId: String, isLike: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+    var photos: [Photo] { get }
+}
 
-final class ImagesListService {
+class ImagesListService: ImagesListServiceProtocol {
     // MARK: - Singleton
     static let shared = ImagesListService()
     private init() {}
