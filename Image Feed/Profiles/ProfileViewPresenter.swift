@@ -20,17 +20,18 @@ final class ProfilePresenter: ProfilePresenterProtocol {
     
     // MARK: - Properties
     private weak var view: ProfileViewProtocol?
-    private let profileService: ProfileService
-    private let profileImageService: ProfileImageService
+    private let profileService: ProfileServiceProtocol
+    private let profileImageService: ProfileImageServiceProtocol
     private let logoutService: ProfileLogoutService
-    
     private var profileImageServiceObserver: NSObjectProtocol?
     
     // MARK: - Initializer
-    init(view: ProfileViewProtocol,
-         profileService: ProfileService = .shared,
-         profileImageService: ProfileImageService = .shared,
-         logoutService: ProfileLogoutService = .shared) {
+    init(
+        view: ProfileViewProtocol,
+        profileService: ProfileServiceProtocol = ProfileService.shared,
+        profileImageService: ProfileImageServiceProtocol = ProfileImageService.shared,
+        logoutService: ProfileLogoutService = ProfileLogoutService.shared
+    ) {
         self.view = view
         self.profileService = profileService
         self.profileImageService = profileImageService

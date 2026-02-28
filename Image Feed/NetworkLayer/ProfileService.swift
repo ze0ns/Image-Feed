@@ -11,7 +11,10 @@ enum ProfileServiceError: Error {
     case invalidProfile
     case decodingError
 }
-final class ProfileService {
+protocol ProfileServiceProtocol {
+    var profile: Profile? { get }
+}
+final class ProfileService: ProfileServiceProtocol {
     // MARK: - Singleton
     static let shared = ProfileService()
     private init() {}
