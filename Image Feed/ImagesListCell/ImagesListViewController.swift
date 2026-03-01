@@ -1,8 +1,8 @@
 //
-//  ImagesListService.swift
+//  ImagesListViewController.swift
 //  Image Feed
 //
-//  Created by Oschepkov Aleksandr on 02.02.2026.
+//  Created by Oschepkov Aleksandr on 15.01.2026.
 //
 
 import UIKit
@@ -12,35 +12,63 @@ protocol ImagesListCellDelegate: AnyObject {
     func imageListCellDidTapLike(_ cell: ImagesListCell)
 }
 
+protocol ImagesListViewProtocol: AnyObject {
+    func updateTableViewAnimated(oldCount: Int, newCount: Int)
+    func updateCellLikeStatus(at indexPath: IndexPath, isLiked: Bool)
+    func showLoading()
+    func hideLoading()
+    func showError(message: String)
+    func navigateToSingleImage(with url: String)
+}
+
 final class ImagesListViewController: UIViewController {
+    
     // MARK: - Private Properties
     private let tableView = UITableView()
     private let cellId = "ImagesListCell"
-    private var photos: [Photo] = []
-    private var isLoading = false
-    private lazy var dateFormatter: DateFormatter = {
-         let formatter = DateFormatter()
-         formatter.dateFormat = "dd MMMM yyyy"
-         formatter.locale = Locale(identifier: "ru_RU")
-         return formatter
-     }()
+    private var presenter: ImagesListPresenterProtocol?
+    private let imageOnScreen = 3
+
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupPresenter()
+        setupUI()
+        presenter?.viewDidLoad()
+    }
+    
+    // MARK: - Setup
+    private func setupPresenter() {
+        // Создаем реальный сервис для продакшена
+        let service = ImagesListService.shared
+        presenter = ImagesListPresenter(
+            view: self,
+            imagesListService: service,
+            dateFormatter: createDateFormatter()
+        )
+    }
+    
+    private func createDateFormatter() -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale(identifier: "ru_RU")
+        return formatter
+    }
+    
+    private func setupUI() {
         view.backgroundColor = .ypBlack
         setupTableView()
         configureTable()
-        fetchInitialPhotos()
     }
     
-    // MARK: - Private Methods
     private func setupTableView() {
         tableView.register(ImagesListCell.self, forCellReuseIdentifier: cellId)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.backgroundColor = .ypBlack
         tableView.separatorStyle = .none
+        tableView.accessibilityIdentifier = "FeedTable"
     }
     
     private func configureTable() {
@@ -53,71 +81,72 @@ final class ImagesListViewController: UIViewController {
             tableView.rightAnchor.constraint(equalTo: view.rightAnchor)
         ])
     }
+}
+
+// MARK: - ImagesListViewProtocol
+extension ImagesListViewController: ImagesListViewProtocol {
     
-    private func fetchInitialPhotos() {
-        ImagesListService.shared.fetchPhotosNextPage { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success:
-                    self?.updateTableViewAnimated()
-                case .failure(let error):
-                    print("Ошибка загрузки фото: \(error)")
-                }
-            }
-        }
-    }
-    
-    private func updateTableViewAnimated() {
-        let newPhotos = ImagesListService.shared.photos
-        let oldCount = photos.count
-        let newCount = newPhotos.count
-        
-        guard newCount > oldCount else { return }
-        
-        photos = newPhotos
-        
+    func updateTableViewAnimated(oldCount: Int, newCount: Int) {
         tableView.performBatchUpdates {
             let indexPaths = (oldCount..<newCount).map { i in
                 IndexPath(row: i, section: 0)
             }
             tableView.insertRows(at: indexPaths, with: .automatic)
-        } completion: { _ in
-            self.isLoading = false
         }
     }
     
-    private func updatePhotoLikeStatus(photoId: String, isLiked: Bool) {
-        if let index = photos.firstIndex(where: { $0.id == photoId }) {
-            var updatedPhoto = photos[index]
-            updatedPhoto.likedByUser = isLiked
-            photos[index] = updatedPhoto
-
-            if let cell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? ImagesListCell {
-                cell.setIsLiked(isLiked)
-            }
+    func updateCellLikeStatus(at indexPath: IndexPath, isLiked: Bool) {
+        if let cell = tableView.cellForRow(at: indexPath) as? ImagesListCell {
+            cell.setIsLiked(isLiked)
         }
+    }
+    
+    func showLoading() {
+        UIBlockingProgressHUD.show()
+    }
+    
+    func hideLoading() {
+        UIBlockingProgressHUD.dismiss()
+    }
+    
+    func showError(message: String) {
+        let alert = UIAlertController(
+            title: "Ошибка",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    func navigateToSingleImage(with url: String) {
+        let singleImageVC = SingleImageViewController()
+        singleImageVC.fullImageURL = url
+        let navController = UINavigationController(rootViewController: singleImageVC)
+        navController.modalPresentationStyle = .fullScreen
+        present(navController, animated: true)
     }
 }
 
-// MARK: - Extension TableViewCell
+// MARK: - UITableViewDataSource
 extension ImagesListViewController: UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photos.count
+        return presenter?.photosCount ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ImagesListCell else {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? ImagesListCell,
+              let photo = presenter?.getPhoto(at: indexPath.row) else { // Безопасное извлечение
             return UITableViewCell()
         }
-        
-        let photo = photos[indexPath.row]
-        let maxImageWidth = tableView.bounds.width - 32
-
-        // Форматирование даты для отображения
-        var dateString = ""
-        if let createdAt = photo.createdAt {
-            dateString = dateFormatter.string(from: createdAt)
+        guard let photo = presenter?.getPhoto(at: indexPath.row) else {
+            print("⚠️ [ImagesListVC] - Не удалось получить фото для ячейки по индексу: \(indexPath.row)")
+            return cell
         }
+        
+        let maxImageWidth = tableView.bounds.width - 32
+        let dateString = presenter?.formatDate(photo.createdAt) ?? ""
         
         cell.configure(
             image: photo.thumbImageURL,
@@ -132,71 +161,36 @@ extension ImagesListViewController: UITableViewDataSource {
         
         return cell
     }
-    
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == photos.count - 3 && !isLoading {
-            isLoading = true
-            ImagesListService.shared.fetchPhotosNextPage { [weak self] result in
-                DispatchQueue.main.async {
-                    switch result {
-                    case .success:
-                        self?.updateTableViewAnimated()
-                    case .failure(let error):
-                        print("Ошибка загрузки следующей страницы: \(error)")
-                        self?.isLoading = false
-                    }
-                }
-            }
-        }
-    }
 }
 
+// MARK: - UITableViewDelegate
 extension ImagesListViewController: UITableViewDelegate {
+   
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == (presenter?.photosCount ?? 0) - imageOnScreen {
+            presenter?.fetchNextPage()
+        }
+    }
+    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let photo = photos[indexPath.row]
-        let singleImageVC = SingleImageViewController()
-        
-        singleImageVC.fullImageURL = photo.fullImageURL
-        
-        let navController = UINavigationController(rootViewController: singleImageVC)
-        navController.modalPresentationStyle = .fullScreen
-        present(navController, animated: true)
+        presenter?.didSelectPhoto(at: indexPath.row)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        let photo = photos[indexPath.row]
+        guard let photo = presenter?.getPhoto(at: indexPath.row) else {
+            return 0
+        }
         let tableViewWidth = tableView.bounds.width - 32
         let aspectRatio = CGFloat(photo.height) / CGFloat(photo.width)
         return tableViewWidth * aspectRatio + 8
     }
 }
 
+// MARK: - ImagesListCellDelegate
 extension ImagesListViewController: ImagesListCellDelegate {
+    
     func imageListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
-        let photo = photos[indexPath.row]
-        let newLikeStatus = !photo.likedByUser
-        
-        UIBlockingProgressHUD.show()
-        
-        ImagesListService.shared.changeLike(photoId: photo.id, isLike: newLikeStatus) { [weak self] result in
-            DispatchQueue.main.async {
-                switch result {
-                case .success:
-                    self?.updatePhotoLikeStatus(photoId: photo.id, isLiked: newLikeStatus)
-                    UIBlockingProgressHUD.dismiss()
-                case .failure(let error):
-                    UIBlockingProgressHUD.dismiss()
-                    let alert = UIAlertController(
-                        title: "Ошибка",
-                        message: "Не удалось изменить лайк: \(error.localizedDescription)",
-                        preferredStyle: .alert
-                    )
-                    alert.addAction(UIAlertAction(title: "OK", style: .default))
-                    self?.present(alert, animated: true)
-                    cell.setIsLiked(photo.likedByUser)
-                }
-            }
-        }
+        presenter?.didTapLike(at: indexPath)
     }
 }

@@ -21,6 +21,7 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
     private let dateLabel = UILabel()
     private lazy var like: UIButton = UIButton()
     private var imageHeightConstraint: NSLayoutConstraint!
+  
     
     // MARK: - Public Properties, Delegate
     weak var delegate: ImagesListCellDelegate?
@@ -50,6 +51,7 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
         
         like.addTarget(self, action: #selector(likeButtonClicked), for: .touchUpInside)
         like.translatesAutoresizingMaskIntoConstraints = false
+        like.accessibilityIdentifier = "LikeButton"
         
         dateLabel.font = .systemFont(ofSize: 13, weight: .regular)
         dateLabel.textColor = .ypWhite
@@ -132,3 +134,4 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
        delegate?.imageListCellDidTapLike(self)
     }
 }
+

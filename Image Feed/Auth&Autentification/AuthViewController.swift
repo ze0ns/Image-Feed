@@ -35,6 +35,7 @@ final class AuthViewController: UIViewController {
         button.setTitleColor(.ypBlack, for: .normal)
         button.layer.cornerRadius = 16
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.accessibilityIdentifier = "Authenticate"
         return button
     }()
     // MARK: - Lifecycle
@@ -91,6 +92,10 @@ final class AuthViewController: UIViewController {
     @objc private func loginButtonTapped() {
         print("Кнопка 'Вход' нажата")
         let nextVC = WebViewViewController()
+        let authHelper = AuthHelper()
+        let presenter = WebViewPresenter(authHelper: authHelper)
+        nextVC.presenter = presenter
+        presenter.view = nextVC
         nextVC.delegate = self
         let navController = UINavigationController(rootViewController: nextVC)
         navController.modalPresentationStyle = .fullScreen
@@ -149,4 +154,5 @@ extension AuthViewController: WebViewViewControllerDelegate {
         vc.dismiss(animated: true)
     }
 }
+
 

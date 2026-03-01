@@ -30,4 +30,5 @@ extension ImagesListViewController{
      ImageViewCell(image: UIImage(resource: ._18), like: true, date: "01-01-2025"),
      ImageViewCell(image: UIImage(resource: ._19), like: false, date: "01-01-2025"),
     ]
+
 }

@@ -35,9 +35,42 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "068B49702F30E20700C7A46D"
+               BlueprintIdentifier = "0625D3B92F4FF96900FFACA6"
                BuildableName = "Image FeedTests.xctest"
                BlueprintName = "Image FeedTests"
+               ReferencedContainer = "container:Image Feed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0625D3C62F4FFAAF00FFACA6"
+               BuildableName = "Image FeedUITests.xctest"
+               BlueprintName = "Image FeedUITests"
+               ReferencedContainer = "container:Image Feed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "06B2FAB22F52F8E700B39950"
+               BuildableName = "Image FeedTests-ListImage.xctest"
+               BlueprintName = "Image FeedTests-ListImage"
+               ReferencedContainer = "container:Image Feed.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "06B2FABF2F530D7A00B39950"
+               BuildableName = "Image FeedTests-Profile.xctest"
+               BlueprintName = "Image FeedTests-Profile"
                ReferencedContainer = "container:Image Feed.xcodeproj">
             </BuildableReference>
          </TestableReference>

@@ -12,17 +12,19 @@ final class SingleImageViewController: UIViewController {
    
     // MARK: - Public Properties
     var fullImageURL: String?
-    
+
     // MARK: - Private Properties
     private let placeholder = UIImage(named: "Stub")
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
+  
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(resource: .backward), for: .normal)
         button.tintColor = .ypWhite
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(backToFirstScreen), for: .touchUpInside)
+        button.accessibilityIdentifier = "BackButton"
         return button
     }()
     private lazy var shareButton: UIButton = {
@@ -62,6 +64,7 @@ final class SingleImageViewController: UIViewController {
         scrollView.backgroundColor = .black
         scrollView.showsVerticalScrollIndicator = false
         scrollView.showsHorizontalScrollIndicator = false
+        scrollView.accessibilityIdentifier = "SingleImageScrollView"
         
         // ImageView
         imageView.contentMode = .scaleAspectFill

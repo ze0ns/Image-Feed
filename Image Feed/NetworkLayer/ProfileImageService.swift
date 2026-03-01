@@ -12,7 +12,11 @@ enum ProfileImageError: Error {
     case invalidProfile
     case decodingError
 }
-final class ProfileImageService {
+protocol ProfileImageServiceProtocol {
+    var userImage: String { get }
+}
+
+final class ProfileImageService: ProfileImageServiceProtocol {
     // MARK: - Singleton
     static let shared = ProfileImageService()
     private init() {}
@@ -83,3 +87,4 @@ final class ProfileImageService {
         self.userImage = " "
     }
 }
+
