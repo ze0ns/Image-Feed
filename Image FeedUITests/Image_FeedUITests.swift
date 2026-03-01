@@ -32,7 +32,7 @@ final class Image_FeedUITests: XCTestCase {
         loginTextField.tap()
         loginTextField.typeText("имя@icloud.com")
         
-        app.buttons["selected"].firstMatch.tap()
+        app.buttons["Done"].firstMatch.tap()
         
         let passwordTextField = webView.descendants(matching: .secureTextField).element
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
@@ -40,7 +40,7 @@ final class Image_FeedUITests: XCTestCase {
         passwordTextField.tap()
         passwordTextField.typeText("пароль")
         
-        app.buttons["selected"].firstMatch.tap()
+        app.buttons["Done"].firstMatch.tap()
         
         webView.buttons["Login"].tap()
         
