@@ -27,6 +27,8 @@ final class ImagesListViewController: UIViewController {
     private let tableView = UITableView()
     private let cellId = "ImagesListCell"
     private var presenter: ImagesListPresenterProtocol?
+    private let imageOnScreen = 3
+
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -66,6 +68,7 @@ final class ImagesListViewController: UIViewController {
         tableView.delegate = self
         tableView.backgroundColor = .ypBlack
         tableView.separatorStyle = .none
+        tableView.accessibilityIdentifier = "FeedTable"
     }
     
     private func configureTable() {
@@ -162,9 +165,9 @@ extension ImagesListViewController: UITableViewDataSource {
 
 // MARK: - UITableViewDelegate
 extension ImagesListViewController: UITableViewDelegate {
-    
+   
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row == (presenter?.photosCount ?? 0) - 3 {
+        if indexPath.row == (presenter?.photosCount ?? 0) - imageOnScreen {
             presenter?.fetchNextPage()
         }
     }

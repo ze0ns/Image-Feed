@@ -31,6 +31,7 @@ final class ImagesListServiceMock: ImagesListServiceProtocol {
 }
 
 final class ImagesListViewMock: ImagesListViewProtocol {
+    
     var updateTableViewAnimatedCalled = false
     var showErrorCalled = false
     var showLoadingCalled = false
@@ -62,17 +63,15 @@ final class ImagesListViewMock: ImagesListViewProtocol {
     func hideLoading() {
         hideLoadingCalled = true
     }
-    
     func updateCellLikeStatus(at indexPath: IndexPath, isLiked: Bool) {
-        updateCellLikeStatusCalled = true
-        lastIndexPath = indexPath
-        lastIsLiked = isLiked
+        
     }
     
     func navigateToSingleImage(with url: String) {
         navigateToSingleImageCalled = true
-        lastImageURL = url
+        lastImageURL = url  // <--- ЭТА СТРОКА ОБЯЗАТЕЛЬНА
     }
+    
 }
 
 // MARK: - Updated Presenter with Protocol
@@ -307,7 +306,7 @@ final class ImagesListPresenterTests: XCTestCase {
     func testFetchNextPageErrorShowsError() {
         // Given
         let testError = NSError(domain: "test", code: 0,
-                               userInfo: [NSLocalizedDescriptionKey: "Network error"])
+                                userInfo: [NSLocalizedDescriptionKey: "Network error"])
         let expectation = XCTestExpectation(description: "Обработка ошибки")
         
         viewMock.showErrorCalled = false
@@ -374,29 +373,26 @@ final class ImagesListPresenterTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
     }
     
-   
+    
     
     // MARK: - Тест: выбор фото для навигации
     func testDidSelectPhoto() {
         // Given
         let testPhoto = createTestPhoto(fullImageURL: "https://test.com/full-image.jpg")
-        let expectation = XCTestExpectation(description: "Выбор фото")
-        
         serviceMock.photos = [testPhoto]
+        
         sut.viewDidLoad()
         serviceMock.fetchCompletion?(.success([testPhoto]))
         
-        // When
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            self.sut.didSelectPhoto(at: 0)
-            
-            // Then
-            XCTAssertTrue(self.viewMock.navigateToSingleImageCalled)
-            XCTAssertEqual(self.viewMock.lastImageURL, "https://test.com/full-image.jpg")
-            expectation.fulfill()
-        }
+        // "Прокручиваем" RunLoop, чтобы выполнить все блоки DispatchQueue.main.async внутри Presenter
+        RunLoop.current.run(until: Date(timeIntervalSinceNow: 0.1))
         
-        wait(for: [expectation], timeout: 1.0)
+        // When
+        sut.didSelectPhoto(at: 0)
+        
+        // Then
+        XCTAssertTrue(viewMock.navigateToSingleImageCalled)
+        XCTAssertEqual(viewMock.lastImageURL, "https://test.com/full-image.jpg")
     }
     
     // MARK: - Тест: photosCount возвращает правильное значение

@@ -23,7 +23,7 @@ final class ProfileViewController: UIViewController, ProfileViewProtocol {
     private lazy var loginName = UILabel()
     private lazy var comments = UILabel()
     private var animationLayer: CAGradientLayer?
-    
+
     private lazy var avatar: UIImageView = {
         let avatar = UIImageView()
         avatar.contentMode = .scaleAspectFit

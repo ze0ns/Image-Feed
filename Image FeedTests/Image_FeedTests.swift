@@ -53,6 +53,7 @@ final class WebViewPresenterSpy: WebViewPresenterProtocol {
 
 // MARK: - AuthHelperSpy
 final class AuthHelperSpy: AuthHelper {
+ 
     var authURLCalled: Bool = false
     var stubURL: URL?
     
@@ -113,7 +114,6 @@ final class WebViewTests: XCTestCase {
     func testProgressVisibleWhenLessThenOne() {
         // Given
         let authHelper = AuthHelperSpy()
-        let presenter = WebViewPresenter(authHelper: authHelper)
         let progress: Float = 0.6
         
         // When
@@ -125,8 +125,6 @@ final class WebViewTests: XCTestCase {
     
     func testProgressHiddenWhenOne() {
         // Given
-        let authHelper = AuthHelperSpy()
-        let presenter = WebViewPresenter(authHelper: authHelper)
         let progress: Float = 1.0
         
         // When
@@ -181,7 +179,7 @@ final class WebViewTests: XCTestCase {
         let url = urlComponents.url!
         
         // when
-        let code = authHelper.code(from: url)
+        let code = authHelper.getCode(from: url)
         
         // then
         XCTAssertEqual(code, "test code 123")

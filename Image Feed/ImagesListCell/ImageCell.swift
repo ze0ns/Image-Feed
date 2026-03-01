@@ -21,6 +21,7 @@ final class ImagesListCell: UITableViewCell, SelfConfiguringCell {
     private let dateLabel = UILabel()
     private lazy var like: UIButton = UIButton()
     private var imageHeightConstraint: NSLayoutConstraint!
+  
     
     // MARK: - Public Properties, Delegate
     weak var delegate: ImagesListCellDelegate?

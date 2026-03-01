@@ -30,7 +30,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     
     // MARK: - Public Methods
     @MainActor func viewDidLoad() {
-        guard let request = authHelper.authRequest() else { return }
+        guard let request = authHelper.createAuthURLRequest() else { return }
         view?.load(request: request)
         didUpdateProgressValue(0)
     }
@@ -44,7 +44,7 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     }
     
     func code(from navigationAction: WKNavigationAction) -> String? {
-        return authHelper.code(from: navigationAction)
+        authHelper.code(from: navigationAction)
     }
     
     // MARK: - Private Methods

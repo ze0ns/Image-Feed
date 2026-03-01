@@ -206,11 +206,11 @@
 			isa = PBXGroup;
 			children = (
 				0625D3B22F4FF83D00FFACA6 /* AuthConfiguration.swift */,
+				068986242F2907F700E1BDA3 /* Data+PrettyJSON.swift */,
+				068986132F287D9A00E1BDA3 /* HTTPMethod.swift */,
 				067F1C0C2F2DF34D00882CB9 /* VCProvider.swift */,
 				0689861B2F28D0A400E1BDA3 /* UIBlockingProgressHUD.swift */,
-				068986132F287D9A00E1BDA3 /* HTTPMethod.swift */,
 				068350802F1A217800DF7E6D /* UIColor+Extensions.swift */,
-				068986242F2907F700E1BDA3 /* Data+PrettyJSON.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -246,11 +246,11 @@
 		068E123C2F1ABE51006531F8 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */,
+				068C03A72F24D52E00F79483 /* OAuthTokenResponseBody.swift */,
 				06BBAC652F46077F007E4626 /* Photo.swift */,
 				068B496B2F3081D200C7A46D /* PhotoResult.swift */,
 				06A4D0DA2F2A4C2800BD71AC /* Profile.swift */,
-				068C03A72F24D52E00F79483 /* OAuthTokenResponseBody.swift */,
-				0683506F2F19F98C00DF7E6D /* ImageViewCell.swift */,
 				068986202F28F6AB00E1BDA3 /* ProfileResult.swift */,
 				0675B7B72F2B29CA005195E9 /* UserResult.swift */,
 			);
@@ -278,10 +278,10 @@
 		069DBFA02F236DE500C2057C /* Auth&Autentification */ = {
 			isa = PBXGroup;
 			children = (
+				0625D3AA2F4FF72300FFACA6 /* AuthHelper.swift */,
+				069DBFA52F236F9700C2057C /* AuthViewController.swift */,
 				0625D3AC2F4FF73500FFACA6 /* WebViewPresenter.swift */,
 				069DBFA12F236E0400C2057C /* WebViewViewController.swift */,
-				069DBFA52F236F9700C2057C /* AuthViewController.swift */,
-				0625D3AA2F4FF72300FFACA6 /* AuthHelper.swift */,
 			);
 			path = "Auth&Autentification";
 			sourceTree = "<group>";

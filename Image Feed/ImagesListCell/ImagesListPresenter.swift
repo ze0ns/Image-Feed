@@ -48,10 +48,6 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     
     // Безопасное получение фото по индексу
     func getPhoto(at index: Int) -> Photo? {
-//        guard index >= 0, index < photos.count else {
-//            print("⚠️ [ImagesListPresenter] - Попытка получить фото по несуществующему индексу: \(index)")
-//            return nil
-//        }
         guard index >= 0, index < photos.count else { return nil }
         return photos[index]
     }

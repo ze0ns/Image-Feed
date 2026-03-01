@@ -6,10 +6,10 @@
 //
 
 import XCTest
+@testable import Image_Feed
 
 final class Image_FeedUITests: XCTestCase {
     var app: XCUIApplication!
-    
     override func setUpWithError() throws {
         continueAfterFailure = false
         app = XCUIApplication()
@@ -30,9 +30,9 @@ final class Image_FeedUITests: XCTestCase {
         XCTAssertTrue(loginTextField.waitForExistence(timeout: 5))
         
         loginTextField.tap()
-        loginTextField.typeText("логин")
+        loginTextField.typeText("имя@icloud.com")
         
-        app.buttons["Next"].firstMatch.tap()
+        app.buttons["selected"].firstMatch.tap()
         
         let passwordTextField = webView.descendants(matching: .secureTextField).element
         XCTAssertTrue(passwordTextField.waitForExistence(timeout: 5))
@@ -40,10 +40,10 @@ final class Image_FeedUITests: XCTestCase {
         passwordTextField.tap()
         passwordTextField.typeText("пароль")
         
-        app.buttons["Next"].firstMatch.tap()
+        app.buttons["selected"].firstMatch.tap()
         
         webView.buttons["Login"].tap()
-
+        
         sleep(10)
         
         let feedTable = app.tables.firstMatch
@@ -80,14 +80,17 @@ final class Image_FeedUITests: XCTestCase {
 
         feedTable.swipeUp()
         feedTable.swipeDown()
-    
+
         let likeButton = firstCell.buttons["LikeButton"]
         XCTAssertTrue(likeButton.exists, "Кнопка лайка должна быть в первой ячейке")
+       
+        likeButton.tap()
+        XCTAssertNotNil(likeButton.waitForExistence(timeout: 2), "Кнопка лайка должна существовать после первого тапа")
+
+        likeButton.tap()
         
-        likeButton.tap()
-        sleep(2)
-        likeButton.tap()
-        sleep(2)
+
+        XCTAssertNotNil(likeButton.waitForExistence(timeout: 2), "Кнопка лайка должна существовать после второго тапа")
         firstCell.tap()
         
         let singleImageElement = app.scrollViews["SingleImageScrollView"].firstMatch

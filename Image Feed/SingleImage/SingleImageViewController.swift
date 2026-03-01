@@ -12,11 +12,12 @@ final class SingleImageViewController: UIViewController {
    
     // MARK: - Public Properties
     var fullImageURL: String?
-    
+
     // MARK: - Private Properties
     private let placeholder = UIImage(named: "Stub")
     private let scrollView = UIScrollView()
     private let imageView = UIImageView()
+  
     private lazy var backButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(resource: .backward), for: .normal)

@@ -29,6 +29,7 @@ final class WebViewViewController: UIViewController {
     private let progressView = UIProgressView()
     weak var delegate: WebViewViewControllerDelegate?
     private var estimatedProgressObservation: NSKeyValueObservation?
+
     
     // MARK: - Public Properties
     var presenter: WebViewPresenterProtocol?

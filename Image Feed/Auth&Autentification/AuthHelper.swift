@@ -9,9 +9,10 @@ import UIKit
 import WebKit
 
 protocol AuthHelperProtocol {
-    func authRequest() -> URLRequest?
+    func createAuthURLRequest() -> URLRequest?
     func code(from navigationAction: WKNavigationAction) -> String?
-    func code(from url: URL) -> String? // Добавляем метод для URL
+    func getCode(from url: URL) -> String?
+    func authURL() -> URL?
 }
 
 // MARK: - AuthHelper
@@ -26,7 +27,7 @@ class AuthHelper: AuthHelperProtocol {
     }
     
     // MARK: - Public Methods
-    func authRequest() -> URLRequest? {
+    func createAuthURLRequest() -> URLRequest? {
         guard let url = authURL() else { return nil }
         return URLRequest(url: url)
     }
@@ -44,10 +45,10 @@ class AuthHelper: AuthHelperProtocol {
     
     func code(from navigationAction: WKNavigationAction) -> String? {
         guard let url = navigationAction.request.url else { return nil }
-        return code(from: url)
+        return getCode(from: url)
     }
     
-    func code(from url: URL) -> String? {
+    func getCode(from url: URL) -> String? {
         guard
             let urlComponents = URLComponents(string: url.absoluteString),
             urlComponents.path == "/oauth/authorize/native",
